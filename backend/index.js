@@ -1,11 +1,11 @@
-
-import express from 'express';
-import morgan from 'morgan';
+const express = require('express');
+const morgan = require('morgan');
+require('dotenv').config(); //load environment variables
 
 // setup express app
 const app = express();
-const hostname = 'localhost';
-const port = 4000;
+const hostname = process.env.HOSTNAME || 'localhost';
+const port = process.env.PORT || 4000;
 
 // use morgan to log requests to the console
 app.use(morgan('dev'));
