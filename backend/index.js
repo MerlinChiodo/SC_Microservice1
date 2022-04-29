@@ -1,4 +1,5 @@
 import 'dotenv/config'; //load environment variables
+import citizenRouter from './citizen/citizen.router.js';
 import express from 'express';
 import morgan from 'morgan';
 
@@ -15,6 +16,9 @@ app.use(express.static('../public'));
 app.use(express.json());
 // needed to handle forms correctly
 app.use(express.urlencoded({ extended: true }));
+
+// setup routes
+app.use("/api/citizen", citizenRouter);
 
 // start server
 app.listen(port, hostname, () => {
