@@ -76,7 +76,7 @@ export async function getCitizenById(request, response) {
         return;
     }
 
-    // TODO remove values that the client is not allowed to sees
+    // TODO remove values that the client is not allowed to see
 
     // send response
     if (citizen === null) {
@@ -116,7 +116,7 @@ export async function hasDogPermit(request, response) {
 
     //TODO get and check permissions from smartauth
 
-    //TODO check if citizen has dog permit
+    //TODO check if citizen has proof of competence for dogowners
 
     // send response
     response.status(200).json({ citizen_id: citizen_id, has_dog_permit: false });

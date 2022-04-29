@@ -17,7 +17,7 @@ router.get("/:id", citizenController.getCitizenById);
 //get ids of children for a given citizen
 router.get("/:id/children", citizenController.getChildren);
 
-//check if a citizen is allowed to keep large/dangerous dogs
+//check if a citizen has a proof of competence for dogowners
 router.get("/:id/hasDogPermit", citizenController.hasDogPermit);
 
 export default router;
