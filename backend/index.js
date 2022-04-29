@@ -1,6 +1,6 @@
-const express = require('express');
-const morgan = require('morgan');
-require('dotenv').config(); //load environment variables
+import 'dotenv/config'; //load environment variables
+import express from 'express';
+import morgan from 'morgan';
 
 // setup express app
 const app = express();
