@@ -1,25 +1,25 @@
-import amqp from 'amqplib'
+import amqp from 'amqplib/callback_api.js'
 
-export async function send(event) {
-    const rabbitUsername = process.env.RABBIT_USERNAME
-    const rabbitPassword = process.env.RABBIT_PASSWORD
-    const rabbitServerUrl = process.env.RABBIT_SERVER_URL
-    return new Promise((resolve, reject) => {
-        amqp.connect(`amqp://${rabbitUsername}:${rabbitPassword}@${rabbitServerUrl}:5672`, async (connectError, connection) => {
-            if (connectError) {
-                console.error(connectError);
-                reject(connectError);
-            }
-            connection.createChannel(async (channelError, channel) => {
-                if (channelError) {
-                    console.error(channelError);
-                    reject(channelError);
-                }
-                //TODO send event via rabbitmq
+export default class RabbitMQWrapper {
+
+    static #rabbitUsername = process.env.RABBIT_USERNAME
+    static #rabbitPassword = process.env.RABBIT_PASSWORD
+    static #rabbitServerUrl = process.env.RABBIT_SERVER_URL
+    static #connectionString = `amqp://${RabbitMQWrapper.#rabbitUsername}:${RabbitMQWrapper.#rabbitPassword}@${RabbitMQWrapper.#rabbitServerUrl}:5672`;
+
+    static async publish(event) {
+        console.log(`RabbitMQ: attempting to sent event ${event}`);
+        amqp.connect(RabbitMQWrapper.#connectionString, { keepAlive: true }, (connectError, connection) => {
+            if (connectError) { throw connectError; }
+            connection.createChannel((channelError, channel) => {
+                if (channelError) { throw channelError; }
                 const routingKey = event.getRoutingKey();
+                //channel.assertExchange('events', 'topic', { durable: false });
+                channel.publish('events', routingKey, Buffer.from(JSON.stringify(event)));
                 console.log(`RabbitMQ: sent event ${event}`);
-                resolve();
             });
         });
-    });
+    }
+
 }
+

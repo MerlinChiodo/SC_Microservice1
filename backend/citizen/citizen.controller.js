@@ -1,7 +1,7 @@
 import { validate } from 'jsonschema';
 import NewCitizenSchema from './citizen.jsonschema.js';
 import * as citizenModel from './citizen.model.js';
-import * as rabbit from '../rabbitmq/rabbitmq.js';
+import RabbitMQWrapper from '../rabbitmq/rabbitmq.js';
 import CitizenCreatedEvent from '../rabbitmq/events/CitizenCreatedEvent.js';
 
 /* -------------------------------------------------------------------------- */
@@ -23,8 +23,7 @@ export async function createCitizen(request, response) {
     const result = validate(citizen_input, NewCitizenSchema);
     if (result.errors.length > 0) {
         let errors = result.errors.map(error => error.stack);
-        response.status(400).json({ citizen_created: false, errors: errors });
-        return;
+        return response.status(400).json({ citizen_created: false, errors: errors });
     }
 
     // create citizen in database
@@ -32,22 +31,18 @@ export async function createCitizen(request, response) {
     const citizen_id = (Math.random() + 1).toString(36).substring(7);
     try {
         citizen_input.citizen_id = citizen_id;
-        citizenModel.createCitizen(citizen_input);
+        await citizenModel.createCitizen(citizen_input);
     } catch (error) {
         console.error(error);
-        response.status(500).json({ citizen_created: false, errors: ['Could not create citizen'] });
-        return;
+        return response.status(500).json({ citizen_created: false, errors: ['Could not create citizen'] });
     }
 
     // send event via rabbitmq
     try {
-        const event = new CitizenCreatedEvent(citizen_id);
-        console.log(`RabbitMQ: attempting to sent event ${event}`);
-        rabbit.send(event);
+        RabbitMQWrapper.publish(new CitizenCreatedEvent(citizen_id));
     } catch (error) {
         console.error(error);
-        response.status(500).json({ citizen_created: true, errors: [error] });
-        return;
+        return response.status(500).json({ citizen_created: true, errors: ['Error whilst connecting to RabbitMQ'] });
     }
 
     // send response
@@ -60,8 +55,7 @@ export async function getCitizenById(request, response) {
     const result = validate(citizen_id, { type: 'string', "minLength": 1, "maxLength": 5 });
     if (result.errors.length > 0) {
         let errors = result.errors.map(error => error.stack);
-        response.status(400).json({ errors: errors });
-        return;
+        return response.status(400).json({ errors: errors });
     }
 
     //TODO get and check permissions from smartauth
@@ -70,20 +64,36 @@ export async function getCitizenById(request, response) {
     let citizen;
     try {
         citizen = await citizenModel.getCitizenById(citizen_id);
+        if (citizen === null) {
+            return response.status(404).json({ errors: ['Citizen was not found.'] });
+        }
     } catch (error) {
         console.error(error);
-        response.status(500).json({ errors: ['Could not get citizen from database'] });
-        return;
+        return response.status(500).json({ errors: ['Could not get citizen from database'] });
     }
 
     // TODO remove values that the client is not allowed to see
+    const citizen_output = {
+        citizen_id: citizen.citizen_id,
+        first_name: citizen.first_name,
+        last_name: citizen.last_name,
+        gender: citizen.gender,
+        birthdate: citizen.birthdate,
+        place_of_birth: citizen.place_of_birth,
+        birthname: citizen.birthname,
+        email: citizen.email,
+        spouse_id: null,
+        child_ids: [],
+        address: {
+            street: citizen.street,
+            housenumber: citizen.housenumber,
+            city_code: citizen.city_code,
+            city: citizen.city
+        }
+    };
 
     // send response
-    if (citizen === null) {
-        response.status(404).json({ errors: ['Citizen was not found.'] });
-    } else {
-        response.status(200).json(citizen);
-    }
+    return response.status(200).json(citizen_output);
 };
 
 export async function getChildren(request, response) {
