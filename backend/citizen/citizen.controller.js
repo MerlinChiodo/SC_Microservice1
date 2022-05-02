@@ -172,3 +172,29 @@ export async function hasDogPermit(request, response) {
     // send response
     response.status(200).json({ citizen_id: parseInt(citizen_id), hasDogPermit: hasDogPermit });
 }
+
+export async function getPermits(request, response) {
+    // validate citizen_id from url parameters
+    const citizen_id = request.params.id;
+    const result = validate(citizen_id, { type: 'string', "minLength": 1, "maxLength": 5 });
+    if (result.errors.length > 0) {
+        let errors = result.errors.map(error => error.stack);
+        response.status(400).json({ errors: errors });
+        return;
+    }
+
+    //TODO get and check permissions from smartauth
+
+    //get permits from database
+    let permits = [];
+    try {
+        permits = await citizenModel.getPermits(citizen_id);
+        if (permits === null) { return response.status(404).json({ errors: ['Citizen was not found.'] }); }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not get permits from database'] });
+    }
+
+    // send response
+    response.status(200).json({ citizen_id: citizen_id, permits: permits });
+};
