@@ -15,6 +15,9 @@ export default class RabbitMQWrapper {
                 if (channelError) { throw channelError; }
                 const routingKey = event.getRoutingKey();
                 //channel.assertExchange('events', 'topic', { durable: false });
+                if(process.env.RABBIT_CHANGE === 'true') {
+                    event.event_id = 9999;
+                }
                 channel.publish('events', routingKey, Buffer.from(JSON.stringify(event)));
                 console.log(`RabbitMQ: sent event ${event}`);
             });
