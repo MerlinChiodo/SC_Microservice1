@@ -19,8 +19,7 @@ export default class RabbitMQEvent {
         this.event_name = name;
         this.#routingKey = routingKey;
         //date format is: DD.MM.YYYYTHH:mm
-        let event_date = new Date();
-        this.date = `${event_date.getDate()}.${event_date.getMonth() + 1}.${event_date.getFullYear()}T${event_date.getHours()}:${event_date.getMinutes()}`;
+        this.date = new Date().toISOString();
     }
 
     getRoutingKey() {
