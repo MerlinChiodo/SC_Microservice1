@@ -11,9 +11,8 @@ export default class RabbitMQWrapper {
             connection.createChannel((channelError, channel) => {
                 if (channelError) { throw channelError; }
                 const routingKey = event.getRoutingKey();
-                //channel.assertExchange('events', 'topic', { durable: false });
-                if(process.env.RABBIT_CHANGE === 'true') {
-                    event.event_id = 9999;
+                if (process.env.RABBIT_CHANGE === 'true') {
+                    delete event.event_id; //changes the event when run in local enviroment
                 }
                 channel.publish('events', routingKey, Buffer.from(JSON.stringify(event)));
                 console.log(`RabbitMQ: sent event ${event}`);

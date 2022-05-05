@@ -5,8 +5,7 @@ import morgan from 'morgan';
 
 // setup express app
 const app = express();
-const hostname = process.env.HOSTNAME || 'localhost';
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
 
 // use morgan to log requests to the console
 app.use(morgan('dev'));
@@ -21,6 +20,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/citizen", citizenRouter);
 
 // start server
-app.listen(port, hostname, () => {
-    console.log(`Websever is ready at http://${hostname}:${port}`);
+app.listen(port, () => {
+    console.log(`Websever is ready at port ${port}`);
 })
