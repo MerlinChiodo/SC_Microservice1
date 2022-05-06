@@ -1,5 +1,5 @@
 import { validate } from 'jsonschema';
-import NewCitizenSchema from './citizen.jsonschema.js';
+import { NewCitizenSchema, CitizenIDSchema } from './citizen.jsonschema.js';
 import RabbitMQWrapper from '../rabbitmq/rabbitmq.js';
 import CitizenCreatedEvent from '../rabbitmq/events/CitizenCreatedEvent.js';
 
@@ -49,7 +49,7 @@ export async function createCitizen(request, response) {
 export async function getCitizenById(request, response) {
     // validate citizen_id from url parameters
     const citizen_id = request.params.id;
-    const result = validate(citizen_id, { type: 'string', "pattern": "^[1-9]\d*$" });
+    const result = validate(citizen_id, CitizenIDSchema);
     if (result.errors.length > 0) {
         let errors = result.errors.map(error => error.stack);
         return response.status(400).json({ errors: errors });
@@ -58,12 +58,14 @@ export async function getCitizenById(request, response) {
     //TODO get and check permissions from smartauth
 
     // get citizen from database
-    let citizen;
+    let citizen, spouse_id, children_ids;
     try {
         citizen = await request.citizenModel.getCitizenById(citizen_id);
         if (citizen === null) {
             return response.status(404).json({ errors: ['Citizen was not found.'] });
         }
+        spouse_id = await request.citizenModel.getSpouseId(citizen_id);
+        children_ids = await request.citizenModel.getChildrenIds(citizen_id);
     } catch (error) {
         console.error(error);
         return response.status(500).json({ errors: ['Could not get citizen from database'] });
@@ -79,8 +81,8 @@ export async function getCitizenById(request, response) {
         place_of_birth: citizen.place_of_birth,
         birthname: citizen.birthname,
         email: citizen.email,
-        spouse_id: null,
-        child_ids: [],
+        spouse_id: spouse_id,
+        child_ids: children_ids,
         address: {
             street: citizen.street,
             housenumber: citizen.housenumber,
@@ -96,7 +98,7 @@ export async function getCitizenById(request, response) {
 export async function getChildren(request, response) {
     // validate citizen_id from url parameters
     const citizen_id = request.params.id;
-    const result = validate(citizen_id, { type: 'string', "pattern": "^[1-9]\d*$" });
+    const result = validate(citizen_id, CitizenIDSchema);
     if (result.errors.length > 0) {
         let errors = result.errors.map(error => error.stack);
         response.status(400).json({ errors: errors });
@@ -105,8 +107,14 @@ export async function getChildren(request, response) {
 
     //TODO get and check permissions from smartauth
 
-    //TODO get children ids from database
-    const children = [];
+    //get children from database
+    let children;
+    try {
+        children = await request.citizenModel.getChildren(citizen_id);
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not get children from database'] });
+    }
 
     // send response
     response.status(200).json({ citizen_id: citizen_id, children: children });
@@ -115,7 +123,7 @@ export async function getChildren(request, response) {
 export async function hasDogPermit(request, response) {
     // validate citizen_id from url parameters
     const citizen_id = request.params.id;
-    const result = validate(citizen_id, { type: 'string', "pattern": "^[1-9]\d*$" });
+    const result = validate(citizen_id, CitizenIDSchema);
     if (result.errors.length > 0) {
         let errors = result.errors.map(error => error.stack);
         response.status(400).json({ errors: errors });
@@ -124,8 +132,15 @@ export async function hasDogPermit(request, response) {
 
     //TODO get and check permissions from smartauth
 
-    //TODO check if citizen has proof of competence for dogowners
+    //check if citizen has dog permit
+    let has_dog_permit;
+    try {
+        has_dog_permit = await request.citizenModel.hasDogPermit(citizen_id);
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not get dog permits from database'] });
+    }
 
     // send response
-    response.status(200).json({ citizen_id: citizen_id, has_dog_permit: false });
+    response.status(200).json({ citizen_id: citizen_id, has_dog_permit: has_dog_permit });
 }

@@ -10,8 +10,11 @@ app.use(express.urlencoded({ extended: true }));
 //create database mock, no actuall calls to database when testing
 const createCitizen = jest.fn();
 const getCitizenById = jest.fn();
+const getChildrenIds = jest.fn();
+const hasDogPermit = jest.fn();
+const getSpouseId = jest.fn();
 app.use((req, res, next) => {
-    req.citizenModel = { createCitizen, getCitizenById }
+    req.citizenModel = { createCitizen, getCitizenById, getChildrenIds, hasDogPermit, getSpouseId };
     next();
 });
 //setup routes
@@ -20,11 +23,15 @@ app.use("/api/citizen", citizenRouter);
 
 describe('Citizen API', () => {
 
-    describe('GET /api/citizen/:id', () => {
+    beforeEach(() => {
+        createCitizen.mockClear();
+        getCitizenById.mockClear();
+        getChildrenIds.mockClear();
+        hasDogPermit.mockClear();
+        getSpouseId.mockClear();
+    });
 
-        beforeEach(() => {
-            getCitizenById.mockClear();
-        });
+    describe('GET /api/citizen/:id', () => {
 
         test('/api/citizen/1 [correct id]', async () => {
             const data = { citizen_id: '1', firstname: 'John Doe' };
@@ -60,10 +67,6 @@ describe('Citizen API', () => {
 
     describe('POST /api/citizen', () => {
 
-        beforeEach(() => {
-            createCitizen.mockClear();
-        });
-
         test('/api/citizen [correct input]', async () => {
             //TODO write test
         });
@@ -75,9 +78,6 @@ describe('Citizen API', () => {
     });
 
     describe('GET /api/citizen/:id/children', () => {
-
-        beforeEach(() => {
-        });
 
         test('/api/citizen/1/children [correct id]', async () => {
             //TODO write test
@@ -94,9 +94,6 @@ describe('Citizen API', () => {
     });
 
     describe('GET /api/citizen/:id/hasDogPermit', () => {
-
-        beforeEach(() => {
-        });
 
         test('/api/citizen/1/hasDogPermit [correct id]', async () => {
             //TODO write test
