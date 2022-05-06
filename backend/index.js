@@ -1,11 +1,11 @@
 import 'dotenv/config'; //load environment variables
 import citizenRouter from './citizen/citizen.router.js';
+import * as citizenModel from './citizen/citizen.model.js';
 import express from 'express';
 import morgan from 'morgan';
 
 // setup express app
 const app = express();
-const port = process.env.PORT || 3000;
 
 // use morgan to log requests to the console
 app.use(morgan('dev'));
@@ -16,8 +16,17 @@ app.use(express.json());
 // needed to handle forms correctly
 app.use(express.urlencoded({ extended: true }));
 
+//pass database as middleware to all routes
+//this way the database can be mocked in tests
+app.use((req, res, next) => {
+    req.citizenModel = citizenModel;
+    next();
+});
 // setup routes
 app.use("/api/citizen", citizenRouter);
+
+//get port from environment variables or use default
+const port = process.env.PORT || 3000;
 
 // start server
 app.listen(port, () => {
