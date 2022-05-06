@@ -27,11 +27,9 @@ export async function createCitizen(request, response) {
     }
 
     // create citizen in database
-    //TODO create proper citizen id
-    const citizen_id = (Math.random() + 1).toString(36).substring(7);
+    let citizen_id
     try {
-        citizen_input.citizen_id = citizen_id;
-        await citizenModel.createCitizen(citizen_input);
+        citizen_id = await citizenModel.createCitizen(citizen_input);
     } catch (error) {
         console.error(error);
         return response.status(500).json({ citizen_created: false, errors: ['Could not create citizen'] });
@@ -109,9 +107,10 @@ export async function getChildren(request, response) {
     //TODO get and check permissions from smartauth
 
     //TODO get children ids from database
+    const children = [];
 
     // send response
-    response.status(200).json({ citizen_id: citizen_id, children: [] });
+    response.status(200).json({ citizen_id: citizen_id, children: children });
 }
 
 export async function hasDogPermit(request, response) {

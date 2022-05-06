@@ -13,10 +13,9 @@ import pool from '../util/mysql.js';
 */
 export async function createCitizen(citizen) {
     const promisePool = pool.promise();
-    const sql = `INSERT INTO CITIZEN(CITIZEN_ID, FIRSTNAME, LASTNAME, GENDER, BIRTHNAME, PLACE_OF_BIRTH, BIRTHDATE, EMAIL, STREET, HOUSENUMBER, CITY_CODE, CITY)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+    const sql = `INSERT INTO Citizen(firstname, lastname, gender, birthname, place_of_birth, birthdate, email, street, housenumber, city_code, city)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
     const values = [
-        citizen.citizen_id,
         citizen.firstname,
         citizen.lastname,
         citizen.gender,
@@ -33,6 +32,7 @@ export async function createCitizen(citizen) {
     if (results.affectedRows === 0) {
         throw new Error('Could not create citizen');
     }
+    return parseInt(results.insertId);
 }
 
 /**
@@ -42,7 +42,7 @@ export async function createCitizen(citizen) {
  */
 export async function getCitizenById(id) {
     const promisePool = pool.promise();
-    const sql = `SELECT * FROM CITIZEN WHERE CITIZEN_ID = ? LIMIT 1;`;
+    const sql = `SELECT * FROM Citizen WHERE citizen_id = ? LIMIT 1;`;
     const [rows, fields] = await promisePool.execute(sql, [id]);
     return rows.length > 0 ? rows[0] : null;
 };
