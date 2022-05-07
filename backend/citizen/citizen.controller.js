@@ -133,14 +133,14 @@ export async function hasDogPermit(request, response) {
     //TODO get and check permissions from smartauth
 
     //check if citizen has dog permit
-    let has_dog_permit;
+    let hasDogPermit;
     try {
-        has_dog_permit = await request.citizenModel.hasDogPermit(citizen_id);
+        hasDogPermit = await request.citizenModel.hasDogPermit(citizen_id);
     } catch (error) {
         console.error(error);
         return response.status(500).json({ errors: ['Could not get dog permits from database'] });
     }
 
     // send response
-    response.status(200).json({ citizen_id: parseInt(citizen_id), has_dog_permit: has_dog_permit });
+    response.status(200).json({ citizen_id: parseInt(citizen_id), hasDogPermit: hasDogPermit });
 }

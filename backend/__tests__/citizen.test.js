@@ -209,7 +209,7 @@ describe('Citizen API', () => {
             //response is correct
             expect(response.statusCode).toBe(200);
             expect(response.body.citizen_id).toEqual(1);
-            expect(response.body.has_dog_permit).toEqual(data);
+            expect(response.body.hasDogPermit).toEqual(data);
             //all functions are being called
             expect(hasDogPermit.mock.calls.length).toBe(1);
         });
