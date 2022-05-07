@@ -11,7 +11,6 @@ const router = Router();
 router.post("/", citizenController.createCitizen);
 
 //get a single citizen by id
-//format for id will change in the future
 router.get("/:id", citizenController.getCitizenById);
 
 //get ids of children for a given citizen

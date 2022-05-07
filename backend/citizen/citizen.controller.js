@@ -110,14 +110,14 @@ export async function getChildren(request, response) {
     //get children from database
     let children;
     try {
-        children = await request.citizenModel.getChildren(citizen_id);
+        children = await request.citizenModel.getChildrenIds(citizen_id);
     } catch (error) {
         console.error(error);
         return response.status(500).json({ errors: ['Could not get children from database'] });
     }
 
     // send response
-    response.status(200).json({ citizen_id: citizen_id, children: children });
+    response.status(200).json({ citizen_id: parseInt(citizen_id), children: children });
 }
 
 export async function hasDogPermit(request, response) {
@@ -142,5 +142,5 @@ export async function hasDogPermit(request, response) {
     }
 
     // send response
-    response.status(200).json({ citizen_id: citizen_id, has_dog_permit: has_dog_permit });
+    response.status(200).json({ citizen_id: parseInt(citizen_id), has_dog_permit: has_dog_permit });
 }
