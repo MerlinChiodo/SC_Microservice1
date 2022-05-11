@@ -53,8 +53,14 @@ export async function getCitizenById(citizen_id) {
  * @returns {Array} the child ids
  */
 export async function getChildrenIds(citizen_id) {
-    //TODO get children from database
-    return [];
+    const promisePool = pool.promise();
+    const sql = `SELECT * FROM Custody WHERE guardian_id = ?;`;
+    const [rows, fields] = await promisePool.execute(sql, [citizen_id]);
+    const results = new Set();
+    for (const row of rows) {
+        results.add(row.child_id);
+    }
+    return Array.from(results);
 }
 
 /**
@@ -63,8 +69,10 @@ export async function getChildrenIds(citizen_id) {
  * @returns {bool} whether or not the citizen has dog permit
  */
 export async function hasDogPermit(citizen_id) {
-    //TODO check if citizen has a proof of competence for dogowners
-    return false;
+    const promisePool = pool.promise();
+    const sql = `SELECT * FROM Permits WHERE permit_id = 2 AND citizen_id = ? AND date_of_issue < CURRENT_DATE() AND(valid_until IS NULL OR valid_until > CURRENT_DATE());`;
+    const [rows, fields] = await promisePool.execute(sql, [citizen_id]);
+    return rows.length > 0;
 }
 
 /**
@@ -73,6 +81,11 @@ export async function hasDogPermit(citizen_id) {
  * @returns {int|null} the spouse id or null
  */
 export async function getSpouseId(citizen_id) {
-    //TODO get spouse id from database
-    return null;
+    const promisePool = pool.promise();
+    const sql = `SELECT * FROM Marriage WHERE partner_1 = ? or partner_2 = ? LIMIT 1;`;
+    const [rows, fields] = await promisePool.execute(sql, [citizen_id, citizen_id]);
+    if (rows.length === 0) { return null }
+    let partner_1 = rows[0].partner_1;
+    let partner_2 = rows[0].partner_2;
+    return partner_1 == citizen_id ? partner_2 : partner_1;
 }
