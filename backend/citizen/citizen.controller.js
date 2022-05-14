@@ -2,6 +2,7 @@ import { validate } from 'jsonschema';
 import { NewCitizenSchema, CitizenIDSchema } from './citizen.jsonschema.js';
 import RabbitMQWrapper from '../rabbitmq/rabbitmq.js';
 import CitizenCreatedEvent from '../rabbitmq/events/CitizenCreatedEvent.js';
+import SmartAuth from '../util/smartauth.js';
 
 /* -------------------------------------------------------------------------- */
 /*                          citizen.controller.js                             */
@@ -55,7 +56,16 @@ export async function getCitizenById(request, response) {
         return response.status(400).json({ errors: errors });
     }
 
-    //TODO get and check permissions from smartauth
+    //get and check permissions from smartauth
+    try {
+        let permission = await SmartAuth.getPermissions(citizen_id);
+        if (!permission) {
+            return response.status(403).json({ errors: ['You do not have permission to view this citizen'] });
+        }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not get permissions'] });
+    }
 
     // get citizen from database
     let citizen, spouse_id, children_ids;
@@ -105,7 +115,16 @@ export async function getChildren(request, response) {
         return;
     }
 
-    //TODO get and check permissions from smartauth
+    //get and check permissions from smartauth
+    try {
+        let permission = await SmartAuth.getPermissions(citizen_id);
+        if (!permission) {
+            return response.status(403).json({ errors: ['You do not have permission to view this citizen'] });
+        }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not get permissions'] });
+    }
 
     //get children from database
     let children;
@@ -130,7 +149,16 @@ export async function hasDogPermit(request, response) {
         return;
     }
 
-    //TODO get and check permissions from smartauth
+    //get and check permissions from smartauth
+    try {
+        let permission = await SmartAuth.getPermissions(citizen_id);
+        if (!permission) {
+            return response.status(403).json({ errors: ['You do not have permission to view this citizen'] });
+        }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not get permissions'] });
+    }
 
     //check if citizen has dog permit
     let hasDogPermit;

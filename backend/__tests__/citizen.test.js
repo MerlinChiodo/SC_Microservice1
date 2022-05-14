@@ -3,6 +3,7 @@ import RabbitMQWrapper from '../rabbitmq/rabbitmq.js';
 import { jest } from '@jest/globals'
 import citizenRouter from '../citizen/citizen.router.js';
 import express from 'express';
+import SmartAuth from '../util/smartauth.js';
 
 //setup express app
 const app = express();
@@ -14,11 +15,11 @@ const getCitizenById = jest.fn();
 const getChildrenIds = jest.fn();
 const hasDogPermit = jest.fn();
 const getSpouseId = jest.fn();
+//setup routes
 app.use((req, res, next) => {
     req.citizenModel = { createCitizen, getCitizenById, getChildrenIds, hasDogPermit, getSpouseId };
     next();
 });
-//setup routes
 app.use("/api/citizen", citizenRouter);
 
 
@@ -29,6 +30,8 @@ describe('Citizen API', () => {
         jest.spyOn(console, 'error').mockImplementation(() => { });
         //mock rabbitmq that the events are not sent while testing
         jest.spyOn(RabbitMQWrapper, 'publish').mockImplementation(() => { });
+        //mock smartauth while testing, to not call the microservice
+        jest.spyOn(SmartAuth, 'getPermissions').mockImplementation(() => { return true; });
     });
 
     beforeEach(() => {
@@ -42,11 +45,13 @@ describe('Citizen API', () => {
     afterEach(() => {
         console.error.mockClear();
         RabbitMQWrapper.publish.mockClear();
+        SmartAuth.getPermissions.mockClear();
     });
 
     afterAll(() => {
         console.error.mockRestore();
         RabbitMQWrapper.publish.mockRestore();
+        SmartAuth.getPermissions.mockRestore();
     });
 
     describe('GET /api/citizen/:id', () => {
