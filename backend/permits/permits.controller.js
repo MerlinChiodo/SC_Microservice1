@@ -98,3 +98,23 @@ export async function deletePermit(request, response) {
     //send response
     response.status(200).json({ deleted: success });
 };
+
+export async function createPermitRequest(request, response) {
+    //validate parameters from body
+
+    //create permit request in database
+
+    //send response
+};
+
+export async function getAllOpenPermitRequests(request, response) {
+    //get all open permit requests from database
+    let requests;
+    //check if there are any requests
+    if (!Array.isArray(requests)) { return response.status(500).json({ errors: ['Could not get permit requests from database'] }); }
+    //send response
+    response.status(200).json({ requests: requests });
+
+export async function approveOrRejectPermitRequest(request, response) {
+    //validate permit_id from url parameters
+};

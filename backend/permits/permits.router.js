@@ -19,4 +19,13 @@ router.put("/:id", permitsController.updatePermit);
 //delete a permittype
 router.delete("/:id", permitsController.deletePermit);
 
+//citizen requests a new permit
+router.post("/requestPermit", permitsController.createPermitRequest);
+
+//admin get all open permit requests
+router.get("/requests", permitsController.getAllOpenPermitRequests);
+
+//admin approve or reject a permit request
+router.put("/requests/:id", permitsController.approveOrRejectPermitRequest);
+
 export default router;
