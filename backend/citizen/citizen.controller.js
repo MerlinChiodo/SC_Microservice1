@@ -176,14 +176,23 @@ export async function hasDogPermit(request, response) {
 export async function getPermits(request, response) {
     // validate citizen_id from url parameters
     const citizen_id = request.params.id;
-    const result = validate(citizen_id, { type: 'string', "minLength": 1, "maxLength": 5 });
+    const result = validate(citizen_id, CitizenIDSchema);
     if (result.errors.length > 0) {
         let errors = result.errors.map(error => error.stack);
         response.status(400).json({ errors: errors });
         return;
     }
 
-    //TODO get and check permissions from smartauth
+    //get and check permissions from smartauth
+    try {
+        let permission = await SmartAuth.getPermissions(citizen_id);
+        if (!permission) {
+            return response.status(403).json({ errors: ['You do not have permission to view the permits of this citizen'] });
+        }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not get permissions'] });
+    }
 
     //get permits from database
     let permits = [];

@@ -1,4 +1,3 @@
-import * as permitModel from './permits.model.js'
 import { validate } from 'jsonschema';
 import { NewPermitSchema, UpdatePermitSchema, PermitID } from './permits.jsonschema.js';
 
@@ -14,7 +13,7 @@ export async function createPermit(request, response) {
     //create permit in database
     let permit;
     try {
-        permit = await permitModel.createPermit(input.title, input.description || null);
+        permit = await request.permitModel.createPermit(input.title, input.description || null);
         if (permit == null) { return response.status(400).json({ errors: ['Could not create permit'] }); }
     } catch (error) {
         console.error(error);
@@ -37,7 +36,7 @@ export async function getPermitById(request, response) {
     //get permit from database
     let permit;
     try {
-        permit = await permitModel.getPermitById(permit_id);
+        permit = await request.permitModel.getPermitById(permit_id);
         if (permit == null) { return response.status(404).json({ errors: ['Permit was not found.'] }); }
     } catch (error) {
         console.error(error);
@@ -67,7 +66,7 @@ export async function updatePermit(request, response) {
     //update permit in database
     let permit;
     try {
-        permit = await permitModel.updatePermit(permit_id, input.title, input.description || null);
+        permit = await request.permitModel.updatePermit(permit_id, input.title, input.description || null);
         if (permit == null) { return response.status(400).json({ errors: ['Could not update permit'] }); }
     } catch (error) {
         console.error(error);
@@ -90,7 +89,7 @@ export async function deletePermit(request, response) {
     //delete permit from database
     let success;
     try {
-        success = await permitModel.deletePermit(permit_id);
+        success = await request.permitModel.deletePermit(permit_id);
     } catch (error) {
         console.error(error);
         return response.status(500).json({ errors: ['Could not delete permit'] });

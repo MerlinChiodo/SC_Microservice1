@@ -89,3 +89,15 @@ export async function getSpouseId(citizen_id) {
     let partner_2 = rows[0].partner_2;
     return partner_1 == citizen_id ? partner_2 : partner_1;
 }
+
+/**
+ * get all active permits for a citizen
+ * @param {string|int} citizen_id
+ * @returns {array} all active permits
+ */
+export async function getPermits(citizen_id) {
+    const promisePool = pool.promise();
+    const sql = `SELECT * FROM Permits WHERE citizen_id = ? AND date_of_issue < CURRENT_DATE() AND(valid_until IS NULL OR valid_until > CURRENT_DATE());`;
+    const [rows, fields] = await promisePool.execute(sql, [citizen_id]);
+    return rows.length > 0 ? rows : [];
+}

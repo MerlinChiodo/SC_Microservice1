@@ -1,6 +1,7 @@
 import 'dotenv/config'; //load environment variables
 import citizenRouter from './citizen/citizen.router.js';
 import * as citizenModel from './citizen/citizen.model.js';
+import * as permitModel from './permits.model.js'
 import express from 'express';
 import morgan from 'morgan';
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 //this way the database can be mocked in tests
 app.use((req, res, next) => {
     req.citizenModel = citizenModel;
+    req.permitModel = permitModel;
     next();
 });
 // setup routes
