@@ -15,9 +15,10 @@ const getCitizenById = jest.fn();
 const getChildrenIds = jest.fn();
 const hasDogPermit = jest.fn();
 const getSpouseId = jest.fn();
+const getPermits = jest.fn();
 //setup routes
 app.use((req, res, next) => {
-    req.citizenModel = { createCitizen, getCitizenById, getChildrenIds, hasDogPermit, getSpouseId };
+    req.citizenModel = { createCitizen, getCitizenById, getChildrenIds, hasDogPermit, getSpouseId, getPermits };
     next();
 });
 app.use("/api/citizen", citizenRouter);
@@ -40,6 +41,7 @@ describe('Citizen API', () => {
         getChildrenIds.mockClear();
         hasDogPermit.mockClear();
         getSpouseId.mockClear();
+        getPermits.mockClear();
     });
 
     afterEach(() => {
@@ -228,6 +230,43 @@ describe('Citizen API', () => {
             expect(response.body.errors.length).toBeGreaterThan(0);
             //all functions are being called
             expect(hasDogPermit.mock.calls.length).toBe(1);
+        });
+
+    });
+
+    describe('GET /api/citizen/:id/permits', () => {
+
+        test('/api/citizen/0/permits [wrong id as parameter]', async () => {
+            const response = await request(app).get('/api/citizen/0/permits');
+            //response is correct
+            expect(response.statusCode).toBe(400);
+            expect(response.body.errors).toBeDefined();
+            expect(response.body.errors.length).toBeGreaterThan(0);
+            //no citizen was searched in the database
+            expect(getPermits.mock.calls.length).toBe(0);
+        });
+
+        test('/api/citizen/1/permits [check correct response]', async () => {
+            const data = [1, 2, 3];
+            getPermits.mockResolvedValue(data);
+            const response = await request(app).get('/api/citizen/1/permits');
+            //response is correct
+            expect(response.statusCode).toBe(200);
+            expect(response.body.citizen_id).toEqual(1);
+            expect(response.body.permits).toEqual(data);
+            //all functions are being called
+            expect(getPermits.mock.calls.length).toBe(1);
+        });
+
+        test('/api/citizen/2/permits [database error]', async () => {
+            getPermits.mockRejectedValue(new Error('database error'));
+            const response = await request(app).get('/api/citizen/2/permits');
+            //response is correct
+            expect(response.statusCode).toBe(500);
+            expect(response.body.errors).toBeDefined();
+            expect(response.body.errors.length).toBeGreaterThan(0);
+            //all functions are being called
+            expect(getPermits.mock.calls.length).toBe(1);
         });
 
     });

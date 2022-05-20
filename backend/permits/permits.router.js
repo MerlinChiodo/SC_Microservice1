@@ -10,14 +10,8 @@ const router = Router();
 //create a new permit
 router.post("/", permitsController.createPermit);
 
-//get information about a permit
-router.get("/:id", permitsController.getPermitById);
-
 //get all permits
-router.get("/all", permitsController.getAllPermits);
-
-//update permit information
-router.put("/:id", permitsController.updatePermit);
+router.get("/", permitsController.getAllPermits);
 
 //delete a permittype
 router.delete("/:id", permitsController.deletePermit);
@@ -26,9 +20,15 @@ router.delete("/:id", permitsController.deletePermit);
 router.post("/requestPermit", permitsController.createPermitRequest);
 
 //admin get all open permit requests
-router.get("/requests", permitsController.getAllOpenPermitRequests);
+router.get("/open", permitsController.getAllOpenPermitRequests);
 
 //admin approve or reject a permit request
-router.put("/requests/:id", permitsController.approveOrRejectPermitRequest);
+router.put("/open/:id", permitsController.approveOrRejectPermitRequest);
+
+//get information about a permit
+router.get("/:id", permitsController.getPermitById);
+
+//update permit information
+router.put("/:id", permitsController.updatePermit);
 
 export default router;

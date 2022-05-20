@@ -29,8 +29,8 @@ const RequestPermitSchema = {
     id: "/RequestPermitSchema",
     type: "object",
     properties: {
-        permit_id: { type: "string", pattern: "^[1-9]\d*$" },
-        citizen_id: { type: "string", pattern: "^[1-9]\d*$" }
+        permit_id: { type: "integer", minimum: 1 },
+        citizen_id: { type: "integer", minimum: 1 },
     },
     required: ["permit_id", "citizen_id"]
 };
@@ -39,7 +39,7 @@ const ApproveOrRejectPermitSchema = {
     id: "/ApproveOrRejectPermitSchema",
     type: "object",
     properties: {
-        citizen_id: { type: "string", pattern: "^[1-9]\d*$" },
+        citizen_id: { type: "integer", minimum: 1 },
         status: { type: "string", pattern: "^(offen|angenommen|abgelehnt)$" },
         valid_until: { type: "string", format: "date" }
     },

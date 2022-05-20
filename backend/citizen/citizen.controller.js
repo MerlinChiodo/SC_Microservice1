@@ -191,7 +191,7 @@ export async function getPermits(request, response) {
     //get permits from database
     let permits = [];
     try {
-        permits = await citizenModel.getPermits(citizen_id);
+        permits = await request.citizenModel.getPermits(citizen_id);
         if (permits === null) { return response.status(404).json({ errors: ['Citizen was not found.'] }); }
     } catch (error) {
         console.error(error);
@@ -199,5 +199,5 @@ export async function getPermits(request, response) {
     }
 
     // send response
-    response.status(200).json({ citizen_id: citizen_id, permits: permits });
+    response.status(200).json({ citizen_id: parseInt(citizen_id), permits: permits });
 };

@@ -180,7 +180,7 @@ export async function approveOrRejectPermitRequest(request, response) {
     //approve or reject permit request in database
     let success;
     try {
-        valid_until = input.valid_until || null;
+        let valid_until = input.valid_until || null;
         success = await request.permitModel.approveOrRejectPermitRequest(permit_id, input.citizen_id, input.status, valid_until);
         if (!success) { return response.status(400).json({ errors: ['Could not approve or reject permit request'] }); }
     } catch (error) {
