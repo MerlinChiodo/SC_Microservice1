@@ -1,5 +1,6 @@
 import 'dotenv/config'; //load environment variables
 import citizenRouter from './citizen/citizen.router.js';
+import permitRouter from './permits/permits.router.js';
 import * as citizenModel from './citizen/citizen.model.js';
 import * as permitModel from './permits/permits.model.js';
 import express from 'express';
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 });
 // setup routes
 app.use("/api/citizen", citizenRouter);
+app.use("/api/permits", permitRouter);
 
 //get port from environment variables or use default
 const port = process.env.PORT || 3000;
