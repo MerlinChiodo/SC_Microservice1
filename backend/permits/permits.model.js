@@ -1,4 +1,9 @@
 
+/* -------------------------------------------------------------------------- */
+/*                              permits.model.js                              */
+/*                  handles the connection to the database                    */
+/* -------------------------------------------------------------------------- */
+
 export async function createPermit(title, description) {
     //TODO save in database
     //create a new permit in the database and return it

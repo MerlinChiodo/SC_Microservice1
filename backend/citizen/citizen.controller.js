@@ -9,12 +9,6 @@ import SmartAuth from '../util/smartauth.js';
 /*             validates the given input and gathers the output               */
 /* -------------------------------------------------------------------------- */
 
-/**
- * validates the request body against the jsonschema  
- * creates new citizen in the database  
- * sends an event via rabbitmq  
- * sends response to client
- */
 export async function createCitizen(request, response) {
     //TODO authenticate that request was sent from our site
 

@@ -1,6 +1,11 @@
 import { validate } from 'jsonschema';
 import { NewPermitSchema, UpdatePermitSchema, PermitID, RequestPermitSchema, ApproveOrRejectPermitSchema } from './permits.jsonschema.js';
 
+/* -------------------------------------------------------------------------- */
+/*                          permits.controller.js                             */
+/*             validates the given input and gathers the output               */
+/* -------------------------------------------------------------------------- */
+
 export async function createPermit(request, response) {
     //validate posted parameters
     const input = request.body;
