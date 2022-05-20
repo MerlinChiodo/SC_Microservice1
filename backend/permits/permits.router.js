@@ -13,6 +13,9 @@ router.post("/", permitsController.createPermit);
 //get information about a permit
 router.get("/:id", permitsController.getPermitById);
 
+//get all permits
+router.get("/all", permitsController.getAllPermits);
+
 //update permit information
 router.put("/:id", permitsController.updatePermit);
 

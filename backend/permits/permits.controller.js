@@ -1,5 +1,5 @@
 import { validate } from 'jsonschema';
-import { NewPermitSchema, UpdatePermitSchema, PermitID } from './permits.jsonschema.js';
+import { NewPermitSchema, UpdatePermitSchema, PermitID, RequestPermitSchema, ApproveOrRejectPermitSchema } from './permits.jsonschema.js';
 
 export async function createPermit(request, response) {
     //validate posted parameters
@@ -99,22 +99,90 @@ export async function deletePermit(request, response) {
     response.status(200).json({ deleted: success });
 };
 
-export async function createPermitRequest(request, response) {
-    //validate parameters from body
-
-    //create permit request in database
+export async function getAllPermits(request, response) {
+    //get all permits from database
+    let permits;
+    try {
+        permits = await request.permitModel.getAllPermits();
+        if (permits == null) { return response.status(404).json({ errors: ['No permits were found.'] }); }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not get all permits'] });
+    }
 
     //send response
+    response.status(200).json({ permits: permits });
+}
+
+export async function createPermitRequest(request, response) {
+    //validate parameters from body
+    const input = request.body;
+    const result = validate(input, RequestPermitSchema);
+    if (result.errors.length > 0) {
+        let errors = result.errors.map(error => error.stack);
+        return response.status(400).json({ errors: errors });
+    }
+
+    //create permit request in database
+    let success;
+    try {
+        success = await request.permitModel.createPermitRequest(input.permit_id, input.citizen_id);
+        if (!success) { return response.status(400).json({ errors: ['Could not create permit request'] }); }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not create permit request'] });
+    }
+
+    //send response
+    response.status(200).json({ success: success });
 };
 
 export async function getAllOpenPermitRequests(request, response) {
     //get all open permit requests from database
     let requests;
+    try {
+        requests = await request.permitModel.getAllOpenPermitRequests();
+        if (requests == null) { return response.status(404).json({ errors: ['No permit requests found'] }); }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not get permit requests from database'] });
+    }
+
     //check if there are any requests
     if (!Array.isArray(requests)) { return response.status(500).json({ errors: ['Could not get permit requests from database'] }); }
+
     //send response
     response.status(200).json({ requests: requests });
+};
 
 export async function approveOrRejectPermitRequest(request, response) {
     //validate permit_id from url parameters
+    const permit_id = request.params.id;
+    const result = validate(permit_id, PermitID);
+    if (result.errors.length > 0) {
+        let errors = result.errors.map(error => error.stack);
+        return response.status(400).json({ errors: errors });
+    }
+
+    //validate parameters from body
+    const input = request.body;
+    const result2 = validate(input, ApproveOrRejectPermitSchema);
+    if (result2.errors.length > 0) {
+        let errors = result2.errors.map(error => error.stack);
+        return response.status(400).json({ errors: errors });
+    }
+
+    //approve or reject permit request in database
+    let success;
+    try {
+        valid_until = input.valid_until || null;
+        success = await request.permitModel.approveOrRejectPermitRequest(permit_id, input.citizen_id, input.status, valid_until);
+        if (!success) { return response.status(400).json({ errors: ['Could not approve or reject permit request'] }); }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not approve or reject permit request'] });
+    }
+
+    //send response
+    response.status(200).json({ success: success });
 };
