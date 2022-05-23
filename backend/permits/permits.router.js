@@ -23,7 +23,10 @@ router.post("/requestPermit", permitsController.createPermitRequest);
 router.get("/open", permitsController.getAllOpenPermitRequests);
 
 //admin approve or reject a permit request
-router.put("/open/:id", permitsController.approveOrRejectPermitRequest);
+router.post("/approve/:id", permitsController.approvePermitRequest);
+
+//admin approve or reject a permit request
+router.post("/reject/:id", permitsController.rejectPermitRequest);
 
 //get information about a permit
 router.get("/:id", permitsController.getPermitById);

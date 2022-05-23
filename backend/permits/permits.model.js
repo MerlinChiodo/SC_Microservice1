@@ -50,9 +50,14 @@ export async function getAllOpenPermitRequests() {
     return [{ citizen_id: 1, permit_id: 1, status: 'offen' }, { citizen_id: 2, permit_id: 2, status: 'offen' }];
 };
 
-export async function approveOrRejectPermitRequest(permit_id, citizen_id, status, valid_until = null) {
+export async function approvePermitRequest(permits_id, valid_until) {
     //TODO update in database
-    //mark permit request as approved or rejected
-    //if approved add permit to citizen's permit list
+    //mark permit request as approved 
+    return true;
+};
+
+export async function rejectPermitRequest(permits_id,) {
+    //TODO update in database
+    //mark permit request as rejected
     return true;
 };

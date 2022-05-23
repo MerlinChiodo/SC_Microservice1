@@ -1,5 +1,6 @@
 import { validate } from 'jsonschema';
-import { NewPermitSchema, UpdatePermitSchema, PermitID, RequestPermitSchema, ApproveOrRejectPermitSchema } from './permits.jsonschema.js';
+import { NewPermitSchema, UpdatePermitSchema, PermitID, RequestPermitSchema, ApprovePermitSchema } from './permits.jsonschema.js';
+import { CitizenIDSchema } from '../citizen/citizen.jsonschema.js';
 
 /* -------------------------------------------------------------------------- */
 /*                          permits.controller.js                             */
@@ -160,10 +161,10 @@ export async function getAllOpenPermitRequests(request, response) {
     response.status(200).json({ requests: requests });
 };
 
-export async function approveOrRejectPermitRequest(request, response) {
+export async function approvePermitRequest(request, response) {
     //validate permit_id from url parameters
-    const permit_id = request.params.id;
-    const result = validate(permit_id, PermitID);
+    const permits_id = request.params.id;
+    const result = validate(permits_id, PermitID);
     if (result.errors.length > 0) {
         let errors = result.errors.map(error => error.stack);
         return response.status(400).json({ errors: errors });
@@ -171,21 +172,44 @@ export async function approveOrRejectPermitRequest(request, response) {
 
     //validate parameters from body
     const input = request.body;
-    const result2 = validate(input, ApproveOrRejectPermitSchema);
+    const result2 = validate(input, ApprovePermitSchema);
     if (result2.errors.length > 0) {
         let errors = result2.errors.map(error => error.stack);
         return response.status(400).json({ errors: errors });
     }
 
-    //approve or reject permit request in database
+    //approve permit request in database
     let success;
     try {
         let valid_until = input.valid_until || null;
-        success = await request.permitModel.approveOrRejectPermitRequest(permit_id, input.citizen_id, input.status, valid_until);
-        if (!success) { return response.status(400).json({ errors: ['Could not approve or reject permit request'] }); }
+        success = await request.permitModel.approvePermitRequest(permits_id, valid_until);
+        if (!success) { return response.status(400).json({ errors: ['Could not approve permit request'] }); }
     } catch (error) {
         console.error(error);
-        return response.status(500).json({ errors: ['Could not approve or reject permit request'] });
+        return response.status(500).json({ errors: ['Could not approve permit request'] });
+    }
+
+    //send response
+    response.status(200).json({ success: success });
+};
+
+export async function rejectPermitRequest(request, response) {
+    //validate permit_id from url parameters
+    const permits_id = request.params.id;
+    const result = validate(permits_id, PermitID);
+    if (result.errors.length > 0) {
+        let errors = result.errors.map(error => error.stack);
+        return response.status(400).json({ errors: errors });
+    }
+
+    //reject permit request in database
+    let success;
+    try {
+        success = await request.permitModel.rejectPermitRequest(permits_id);
+        if (!success) { return response.status(400).json({ errors: ['Could not reject permit request'] }); }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not reject permit request'] });
     }
 
     //send response

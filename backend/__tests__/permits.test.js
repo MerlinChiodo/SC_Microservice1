@@ -18,10 +18,11 @@ const deletePermit = jest.fn();
 const getAllPermits = jest.fn();
 const createPermitRequest = jest.fn();
 const getAllOpenPermitRequests = jest.fn();
-const approveOrRejectPermitRequest = jest.fn();
+const approvePermitRequest = jest.fn();
+const rejectPermitRequest = jest.fn();
 //setup routes
 app.use((req, res, next) => {
-    req.permitModel = { createPermit, getPermitById, updatePermit, deletePermit, getAllPermits, createPermitRequest, getAllOpenPermitRequests, approveOrRejectPermitRequest };
+    req.permitModel = { createPermit, getPermitById, updatePermit, deletePermit, getAllPermits, createPermitRequest, getAllOpenPermitRequests, approvePermitRequest, rejectPermitRequest };
     next();
 });
 app.use("/api/citizen", citizenRouter);
@@ -46,7 +47,8 @@ describe('Permits API', () => {
         getAllPermits.mockReset();
         createPermitRequest.mockReset();
         getAllOpenPermitRequests.mockReset();
-        approveOrRejectPermitRequest.mockReset();
+        approvePermitRequest.mockReset();
+        rejectPermitRequest.mockReset();
     });
 
     afterEach(() => {
@@ -261,7 +263,7 @@ describe('Permits API', () => {
             const response = await request(app).post('/api/permits/requestPermit').send(data);
             //response is correct
             expect(response.statusCode).toBe(200);
-            expect(response.body.success).toBe(true);
+            expect(response.body).toEqual({ success: true });
             //database is called correctly
             expect(createPermitRequest.mock.calls.length).toBe(1);
         });
@@ -321,54 +323,89 @@ describe('Permits API', () => {
 
     });
 
-    describe('PUT /api/permits/open/:id', () => {
+    describe('PUT /api/permits/approve/:id', () => {
 
-        test('/api/permits/open/:id [correct input]', async () => {
-            const data = { status: 'abgelehnt', citizen_id: 1 };
-            approveOrRejectPermitRequest.mockReturnValue(true);
-            const response = await request(app).put('/api/permits/open/1').send(data);
-            // console.debug(response.body);
+        test('/api/permits/approve/:id [correct input]', async () => {
+            const data = { valid_until: '2020-01-01' };
+            approvePermitRequest.mockReturnValue(true);
+            const response = await request(app).post('/api/permits/approve/1').send(data);
             //response is correct
             expect(response.statusCode).toBe(200);
-            expect(response.body.success).toBe(true);
+            expect(response.body).toEqual({ success: true });
             //database is called correctly
-            expect(approveOrRejectPermitRequest.mock.calls.length).toBe(1);
+            expect(approvePermitRequest.mock.calls.length).toBe(1);
         });
 
-        test('/api/permits/open/:id [wrong input]', async () => {
-            const data = { status: '', citizen_id: 1 }; //missing status
-            approveOrRejectPermitRequest.mockReturnValue(false);
-            const response = await request(app).put('/api/permits/open/1').send(data);
+        test('/api/permits/approve/:id [wrong input]', async () => {
+            const data = { valid_until: '2020-01' };
+            const response = await request(app).post('/api/permits/approve/1').send(data);
             //response is correct
             expect(response.statusCode).toBe(400);
             expect(response.body.errors).toBeDefined();
             expect(response.body.errors.length).toBeGreaterThan(0);
             //database is called correctly
-            expect(approveOrRejectPermitRequest.mock.calls.length).toBe(0);
+            expect(approvePermitRequest.mock.calls.length).toBe(0);
         });
 
-        test('/api/permits/open/:id [wrong id]', async () => {
-            const data = { status: 'abgelehnt', citizen_id: 1 };
-            approveOrRejectPermitRequest.mockReturnValue(false);
-            const response = await request(app).put('/api/permits/open/0').send(data);
+        test('/api/permits/approve/:id [wrong id]', async () => {
+            const data = { valid_until: '2020-01-01' };
+            const response = await request(app).post('/api/permits/approve/0').send(data);
             //response is correct
             expect(response.statusCode).toBe(400);
             expect(response.body.errors).toBeDefined();
             expect(response.body.errors.length).toBeGreaterThan(0);
             //database is called correctly
-            expect(approveOrRejectPermitRequest.mock.calls.length).toBe(0);
+            expect(approvePermitRequest.mock.calls.length).toBe(0);
         });
 
-        test('/api/permits/open/:id [database error]', async () => {
-            const data = { status: 'abgelehnt', citizen_id: 1 };
-            approveOrRejectPermitRequest.mockRejectedValue(new Error('database error'));
-            const response = await request(app).put('/api/permits/open/1').send(data);
+        test('/api/permits/approve/:id [database error]', async () => {
+            const data = { valid_until: '2020-01-01' };
+            approvePermitRequest.mockRejectedValue(new Error('database error'));
+            const response = await request(app).post('/api/permits/approve/1').send(data);
             //response is correct
             expect(response.statusCode).toBe(500);
             expect(response.body.errors).toBeDefined();
             expect(response.body.errors.length).toBeGreaterThan(0);
             //database is called correctly
-            expect(approveOrRejectPermitRequest.mock.calls.length).toBe(1);
+            expect(approvePermitRequest.mock.calls.length).toBe(1);
+        });
+
+    });
+
+    describe('PUT /api/permits/reject/:id', () => {
+
+        test('/api/permits/reject/:id [correct input]', async () => {
+            const data = { reason: 'test' };
+            rejectPermitRequest.mockReturnValue(true);
+            const response = await request(app).post('/api/permits/reject/1').send(data);
+            //response is correct
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual({ success: true });
+            //database is called correctly
+            expect(rejectPermitRequest.mock.calls.length).toBe(1);
+        });
+
+        test('/api/permits/reject/:id [wrong id]', async () => {
+            const data = { reason: 'test' };
+            const response = await request(app).post('/api/permits/reject/0').send(data);
+            //response is correct
+            expect(response.statusCode).toBe(400);
+            expect(response.body.errors).toBeDefined();
+            expect(response.body.errors.length).toBeGreaterThan(0);
+            //database is called correctly
+            expect(rejectPermitRequest.mock.calls.length).toBe(0);
+        });
+
+        test('/api/permits/reject/:id [database error]', async () => {
+            const data = { reason: 'test' };
+            rejectPermitRequest.mockRejectedValue(new Error('database error'));
+            const response = await request(app).post('/api/permits/reject/1').send(data);
+            //response is correct
+            expect(response.statusCode).toBe(500);
+            expect(response.body.errors).toBeDefined();
+            expect(response.body.errors.length).toBeGreaterThan(0);
+            //database is called correctly
+            expect(rejectPermitRequest.mock.calls.length).toBe(1);
         });
 
     });

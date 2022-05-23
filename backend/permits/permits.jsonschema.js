@@ -35,15 +35,13 @@ const RequestPermitSchema = {
     required: ["permit_id", "citizen_id"]
 };
 
-const ApproveOrRejectPermitSchema = {
+const ApprovePermitSchema = {
     id: "/ApproveOrRejectPermitSchema",
     type: "object",
     properties: {
-        citizen_id: { type: "integer", minimum: 1 },
-        status: { type: "string", pattern: "^(offen|angenommen|abgelehnt)$" },
         valid_until: { type: "string", format: "date" }
     },
-    required: ["citizen_id", "status"]
+    required: []
 };
 
-export { PermitID, NewPermitSchema, UpdatePermitSchema, RequestPermitSchema, ApproveOrRejectPermitSchema };
+export { PermitID, NewPermitSchema, UpdatePermitSchema, RequestPermitSchema, ApprovePermitSchema };
