@@ -19,4 +19,7 @@ router.get("/:id/children", citizenController.getChildren);
 //check if a citizen has a proof of competence for dogowners
 router.get("/:id/hasDogPermit", citizenController.hasDogPermit);
 
+//get all active permits for a citizen
+router.get("/:id/permits", citizenController.getPermits);
+
 export default router;

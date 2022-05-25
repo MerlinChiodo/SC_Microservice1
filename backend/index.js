@@ -1,6 +1,10 @@
 import 'dotenv/config'; //load environment variables
 import citizenRouter from './citizen/citizen.router.js';
+import permitRouter from './permits/permits.router.js';
+import requestRouter from './requests/requests.router.js';
 import * as citizenModel from './citizen/citizen.model.js';
+import * as permitModel from './permits/permits.model.js';
+import * as requestModel from './requests/requests.model.js';
 import express from 'express';
 import morgan from 'morgan';
 
@@ -20,10 +24,14 @@ app.use(express.urlencoded({ extended: true }));
 //this way the database can be mocked in tests
 app.use((req, res, next) => {
     req.citizenModel = citizenModel;
+    req.permitModel = permitModel;
+    req.requestModel = requestModel;
     next();
 });
 // setup routes
 app.use("/api/citizen", citizenRouter);
+app.use("/api/permits", permitRouter);
+app.use("/api/requests", requestRouter);
 
 //get port from environment variables or use default
 const port = process.env.PORT || 3000;

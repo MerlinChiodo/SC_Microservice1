@@ -9,12 +9,6 @@ import SmartAuth from '../util/smartauth.js';
 /*             validates the given input and gathers the output               */
 /* -------------------------------------------------------------------------- */
 
-/**
- * validates the request body against the jsonschema  
- * creates new citizen in the database  
- * sends an event via rabbitmq  
- * sends response to client
- */
 export async function createCitizen(request, response) {
     //TODO authenticate that request was sent from our site
 
@@ -172,3 +166,38 @@ export async function hasDogPermit(request, response) {
     // send response
     response.status(200).json({ citizen_id: parseInt(citizen_id), hasDogPermit: hasDogPermit });
 }
+
+export async function getPermits(request, response) {
+    // validate citizen_id from url parameters
+    const citizen_id = request.params.id;
+    const result = validate(citizen_id, CitizenIDSchema);
+    if (result.errors.length > 0) {
+        let errors = result.errors.map(error => error.stack);
+        response.status(400).json({ errors: errors });
+        return;
+    }
+
+    //get and check permissions from smartauth
+    try {
+        let permission = await SmartAuth.getPermissions(citizen_id);
+        if (!permission) {
+            return response.status(403).json({ errors: ['You do not have permission to view the permits of this citizen'] });
+        }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not get permissions'] });
+    }
+
+    //get permits from database
+    let permits = [];
+    try {
+        permits = await request.citizenModel.getPermits(citizen_id);
+        if (permits === null) { return response.status(404).json({ errors: ['Citizen was not found.'] }); }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not get permits from database'] });
+    }
+
+    // send response
+    response.status(200).json({ citizen_id: parseInt(citizen_id), permits: permits });
+};

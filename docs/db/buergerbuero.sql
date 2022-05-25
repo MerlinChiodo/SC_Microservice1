@@ -1,74 +1,8 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     06.05.2022 13:35:39                          */
+/* Created on:     22.05.2022 18:40:24                          */
 /*==============================================================*/
 
-
-alter table Custody 
-   drop foreign key FK_CUSTODY_CUSTODY_CITIZEN;
-
-alter table Custody 
-   drop foreign key FK_CUSTODY_CUSTODY2_CITIZEN;
-
-alter table Marriage 
-   drop foreign key FK_MARRIAGE_MARRIAGE_CITIZEN;
-
-alter table Marriage 
-   drop foreign key FK_MARRIAGE_MARRIAGE2_CITIZEN;
-
-alter table Permits 
-   drop foreign key FK_PERMITS_PERMITS_PERMIT;
-
-alter table Permits 
-   drop foreign key FK_PERMITS_PERMITS2_CITIZEN;
-
-alter table Requests 
-   drop foreign key FK_REQUESTS_REQUESTS_REQUEST;
-
-alter table Requests 
-   drop foreign key FK_REQUESTS_REQUESTS2_CITIZEN;
-
-drop table if exists Citizen;
-
-
-alter table Custody 
-   drop foreign key FK_CUSTODY_CUSTODY_CITIZEN;
-
-alter table Custody 
-   drop foreign key FK_CUSTODY_CUSTODY2_CITIZEN;
-
-drop table if exists Custody;
-
-
-alter table Marriage 
-   drop foreign key FK_MARRIAGE_MARRIAGE_CITIZEN;
-
-alter table Marriage 
-   drop foreign key FK_MARRIAGE_MARRIAGE2_CITIZEN;
-
-drop table if exists Marriage;
-
-drop table if exists Permit;
-
-
-alter table Permits 
-   drop foreign key FK_PERMITS_PERMITS_PERMIT;
-
-alter table Permits 
-   drop foreign key FK_PERMITS_PERMITS2_CITIZEN;
-
-drop table if exists Permits;
-
-drop table if exists Request;
-
-
-alter table Requests 
-   drop foreign key FK_REQUESTS_REQUESTS_REQUEST;
-
-alter table Requests 
-   drop foreign key FK_REQUESTS_REQUESTS2_CITIZEN;
-
-drop table if exists Requests;
 
 /*==============================================================*/
 /* Table: Citizen                                               */
@@ -111,13 +45,28 @@ create table Marriage
 );
 
 /*==============================================================*/
+/* Table: NewCitizenData                                        */
+/*==============================================================*/
+create table NewCitizenData
+(
+   citizen_id_new       int unsigned not null auto_increment  comment '',
+   firstname            varchar(100)  comment '',
+   lastname             varchar(100)  comment '',
+   street               varchar(100)  comment '',
+   housenumber          varchar(5)  comment '',
+   city_code            int  comment '',
+   city                 varchar(100)  comment '',
+   primary key (citizen_id_new)
+);
+
+/*==============================================================*/
 /* Table: Permit                                                */
 /*==============================================================*/
 create table Permit
 (
    permit_id            int unsigned not null auto_increment  comment '',
-   p_title              varchar(100) not null  comment '',
-   p_description        text  comment '',
+   title                varchar(100) not null  comment '',
+   description          text  comment '',
    primary key (permit_id)
 );
 
@@ -126,11 +75,26 @@ create table Permit
 /*==============================================================*/
 create table Permits
 (
-   permit_id            int unsigned not null  comment '',
+   permits_id           int unsigned not null auto_increment  comment '',
    citizen_id           int unsigned not null  comment '',
+   permit_id            int unsigned not null  comment '',
    date_of_issue        date not null  comment '',
    valid_until          date  comment '',
-   primary key (permit_id, citizen_id)
+   status               varchar(10) not null  comment '',
+   primary key (permits_id)
+);
+
+/*==============================================================*/
+/* Table: RelationshipChange                                    */
+/*==============================================================*/
+create table RelationshipChange
+(
+   id                   int unsigned not null auto_increment  comment '',
+   citizen_id_1         int unsigned not null  comment '',
+   citizen_id_2         int unsigned not null  comment '',
+   change_type          varchar(15) not null  comment '',
+   status               varchar(10) not null  comment '',
+   primary key (id)
 );
 
 /*==============================================================*/
@@ -139,23 +103,13 @@ create table Permits
 create table Request
 (
    request_id           int unsigned not null auto_increment  comment '',
-   r_title              varchar(100) not null  comment '',
-   r_description        text  comment '',
-   primary key (request_id)
-);
-
-/*==============================================================*/
-/* Table: Requests                                              */
-/*==============================================================*/
-create table Requests
-(
-   request_id           int unsigned not null  comment '',
    citizen_id           int unsigned not null  comment '',
-   file                 mediumblob  comment '',
-   opened               datetime not null  comment '',
+   citizen_id_new       int unsigned not null  comment '',
+   opened               datetime not null DEFAULT CURRENT_TIMESTAMP comment '',
    closed               datetime  comment '',
    status               varchar(10) not null  comment '',
-   primary key (request_id, citizen_id)
+   reasoning            varchar(255)  comment '',
+   primary key (request_id)
 );
 
 alter table Custody add constraint FK_CUSTODY_CUSTODY_CITIZEN foreign key (guardian_id)
@@ -170,15 +124,21 @@ alter table Marriage add constraint FK_MARRIAGE_MARRIAGE_CITIZEN foreign key (pa
 alter table Marriage add constraint FK_MARRIAGE_MARRIAGE2_CITIZEN foreign key (partner_2)
       references Citizen (citizen_id) on delete restrict on update restrict;
 
-alter table Permits add constraint FK_PERMITS_PERMITS_PERMIT foreign key (permit_id)
+alter table Permits add constraint FK_PERMITS_CITIZENPE_CITIZEN foreign key (citizen_id)
+      references Citizen (citizen_id) on delete restrict on update restrict;
+
+alter table Permits add constraint FK_PERMITS_PERMITPER_PERMIT foreign key (permit_id)
       references Permit (permit_id) on delete restrict on update restrict;
 
-alter table Permits add constraint FK_PERMITS_PERMITS2_CITIZEN foreign key (citizen_id)
+alter table RelationshipChange add constraint FK_RELATION_RELATIONS_CITIZEN foreign key (citizen_id_1)
       references Citizen (citizen_id) on delete restrict on update restrict;
 
-alter table Requests add constraint FK_REQUESTS_REQUESTS_REQUEST foreign key (request_id)
-      references Request (request_id) on delete restrict on update restrict;
-
-alter table Requests add constraint FK_REQUESTS_REQUESTS2_CITIZEN foreign key (citizen_id)
+alter table RelationshipChange add constraint FK_RELATION_RELATIONS_CITIZEN2 foreign key (citizen_id_2)
       references Citizen (citizen_id) on delete restrict on update restrict;
+
+alter table Request add constraint FK_REQUEST_RELATIONS_CITIZEN foreign key (citizen_id)
+      references Citizen (citizen_id) on delete restrict on update restrict;
+
+alter table Request add constraint FK_REQUEST_RELATIONS_NEWCITIZ foreign key (citizen_id_new)
+      references NewCitizenData (citizen_id_new) on delete restrict on update restrict;
 
