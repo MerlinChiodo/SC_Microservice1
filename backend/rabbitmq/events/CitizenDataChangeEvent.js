@@ -1,6 +1,6 @@
 import RabbitMQEvent from "./RabbitMQEvent.js";
 
-export default class CitizenNameChangeEvent extends RabbitMQEvent {
+export default class CitizenDataChangeEvent extends RabbitMQEvent {
 
     constructor(citizen_id) {
         super('Datenänderung', 1002, 'public.buergerbuero');

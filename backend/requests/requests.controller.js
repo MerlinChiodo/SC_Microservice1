@@ -1,5 +1,7 @@
 import { validate } from 'jsonschema';
 import { NewRequestSchema, RequestIDSchema } from './requests.jsonschema.js';
+import RabbitMQWrapper from '../rabbitmq/rabbitmq.js';
+import CitizenDataChangeEvent from '../rabbitmq/events/CitizenDataChangeEvent.js';
 
 /* -------------------------------------------------------------------------- */
 /*                          requests.controller.js                            */
@@ -64,6 +66,17 @@ export async function approveRequest(request, response) {
     } catch (error) {
         console.error(error);
         return response.status(500).json({ errors: ['Could not approve request'] });
+    }
+
+    //send rabbitmq message
+    try {
+        const oldRequest = await request.requestModel.getRequestById(request_id);
+        if (success && oldRequest != null) {
+            await RabbitMQWrapper.publish(new CitizenDataChangeEvent(oldRequest.citizen_id));
+        }
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({ errors: ['Could not send rabbitmq message'] });
     }
 
     //send response
