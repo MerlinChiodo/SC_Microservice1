@@ -1,12 +1,13 @@
 /*==============================================================*/
 /*                   DELETE OLD DATA ON START                   */
 /*==============================================================*/
+TRUNCATE `Request`;
+DELETE FROM `NewCitizenData`; ALTER TABLE `NewCitizenData` AUTO_INCREMENT = 1; /*Truncate not working on this table*/
 TRUNCATE `Permits`;
-TRUNCATE `Requests`;
 DELETE FROM `Permit`; ALTER TABLE `Permit` AUTO_INCREMENT = 1; /*Truncate not working on this table*/
-DELETE FROM `Request`; ALTER TABLE `Request` AUTO_INCREMENT = 1; /*Truncate not working on this table*/
 DELETE FROM `Custody`;
 DELETE FROM `Marriage`;
+TRUNCATE `RelationshipChange`;
 DELETE FROM `Citizen`; ALTER TABLE `Citizen` AUTO_INCREMENT = 1; /*Truncate not working on this table*/
 
 /*==============================================================*/
@@ -32,20 +33,19 @@ values ("Max", "Mustermann", "m", null, "Musterhausen", "1970-02-25", "max@muste
 insert into Custody (guardian_id, child_id)
 values (1, 3),(2, 3);
 
-insert into Permit (p_title, p_description)
+insert into Permit (title, description)
 values ("Baugenehmigung", "Genehmigung für Bauarbeiten am Grundstück des Bürgers"),
 ("Sachkundenachweis für Hundehalter", "Diese Erlaubnis befähigt den Bürger größere/gefährliche Hunde zu halten.");
 
-insert into Permits (permit_id, citizen_id, date_of_issue, valid_until)
-values (1, 1, "2009-11-25", "2010-11-25"),
-(2, 1, "2014-01-12", null);
+insert into Permits (permit_id, citizen_id, date_of_issue, valid_until, status)
+values (1, 1, "2009-11-25", "2010-11-25", "offen"),
+(2, 1, "2014-01-12", null, "offen");
 
 insert into Marriage (partner_1, partner_2)
 values (1, 2),(11, 12),(14, 15);
 
-insert into Request (r_title, r_description)
-values ("Antrag auf Namensänderung", "Ein Antrag zur Änderung des Namens eines Bürgers."),
-("Umzug melden", "Ein Antrag zur Änderung der aktuellen Adresse des Bürgers.");
+insert into NewCitizenData(firstname, lastname, street, housenumber, city_code, city)
+values("Maximilian", null, null, null, null, null);
 
-insert into Requests (request_id, citizen_id, opened, closed, status)
-values (1, 1, "2022-2-25 14:16:37", null, "offen");
+insert into Request(citizen_id, citizen_id_new, opened, status, reasoning)
+values(1, 1, NOW(), "offen", "Ich möchte meinen Namen ändern.");
