@@ -12,7 +12,7 @@ function App() {
       <NavBar />
       <div className="pages">
         <Routes>
-          <Route exact path="/" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/melden" element={<Register />} />
           <Route path="/antraege" element={<Requests />} />
           <Route path="/genehmigungen" element={<Licenses />} />

@@ -13,24 +13,24 @@ function NavBar() {
     <>
       <nav className="navbar">
         <div className="nav-container">
-          <NavLink exact to="/" className="nav-logo">
+          <NavLink to="/" className="nav-logo">
             <img src={logo} alt="Bürgerbüro Logo" />
             Bürgerbüro
           </NavLink>
 
           <ul className={click ? "nav-menu active" : "nav-menu"}>
             <li className="nav-item">
-              <NavLink exact to="/melden" activeClassName="active" className="nav-links" onClick={handleClick} >
+              <NavLink to="/melden" activeclassname="active" className="nav-links" onClick={handleClick} >
                 Melden
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink exact to="/antraege" activeClassName="active" className="nav-links" onClick={handleClick} >
+              <NavLink to="/antraege" activeclassname="active" className="nav-links" onClick={handleClick} >
                 Anträge
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink exact to="/genehmigungen" activeClassName="active" className="nav-links" onClick={handleClick} >
+              <NavLink to="/genehmigungen" activeclassname="active" className="nav-links" onClick={handleClick} >
                 Genehmigungen
               </NavLink>
             </li>
