@@ -25,12 +25,12 @@ export const Register = () => {
     <div>
       <Container size={1000} my={40}>
         <Title
-          align="center"
-          sx={(theme) => ({ fontFamily: `Greycliff CF, ${theme.fontFamily}`, fontWeight: 900 })} >
+          align="center" order={1}
+          sx={(theme) => ({ fontFamily: `Greycliff CF, ${theme.fontFamily}`, fontWeight: 900, color: theme.colors.gray[3] })} >
           In der SmartCity melden.
         </Title>
 
-        <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+        <Paper withBorder shadow="md" p={30} mt={30} radius="md" sx={(theme) => ({ backgroundColor: theme.colors.gray[9] })}>
           <form onSubmit={form.onSubmit((values) => console.log(values))}>
             <Group spacing="xs" grow>
               <TextInput label="Vorname" placeholder="Max" required mt="md" {...form.getInputProps('firstname')} />
