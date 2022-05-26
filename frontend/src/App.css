@@ -10,4 +10,6 @@ body {
 .pages {
   color: #262a2c;
   margin-top: 100px;
+  margin-left: 10%;
+  margin-right: 10%;
 }
