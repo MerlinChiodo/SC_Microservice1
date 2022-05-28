@@ -1,8 +1,12 @@
 import React, { useEffect } from "react";
-import { TextInput, Paper, Title, Container, Group, Button, Select, NumberInput } from '@mantine/core';
+import { TextInput, Paper, Title, Container, Button, Select, NumberInput, Grid } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { Calendar } from 'tabler-icons-react';
+
+const handleSubmit = (values) => {
+  console.log(values);
+};
 
 export const Register = () => {
 
@@ -14,51 +18,61 @@ export const Register = () => {
     initialValues: {
       firstname: '', lastname: '', email: '', birthname: '', birthdate: '', place_of_birth: '',
       gender: '', street: '', housenumber: '', city_code: '', city: ''
-    },
-
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-    },
+    }
   });
 
   return (
-    <div>
-      <Container size={1000} my={40}>
-        <Title align="center" order={1} sx={() => ({ fontWeight: 900 })} >
-          In der SmartCity melden.
-        </Title>
+    <Container size={1000} my={40}>
+      <Title align="center" order={1} sx={() => ({ fontWeight: 900 })} >
+        In der SmartCity melden.
+      </Title>
 
-        <Paper withBorder shadow="md" p={30} mt={30} radius="md" sx={(theme) => ({ backgroundColor: theme.colors.dark[7] })}>
-          <form onSubmit={form.onSubmit((values) => console.log(values))}>
-            <Group spacing="xs" grow>
-              <TextInput label="Vorname" placeholder="Max" required mt="md" {...form.getInputProps('firstname')} />
-              <TextInput label="Nachname" placeholder="Mustermann" required mt="md" {...form.getInputProps('lastname')} />
-              <Select label="Geschlecht" placeholder="Bitte auswählen" required mt="md" {...form.getInputProps('gender')}
+      <Paper withBorder shadow="md" p={30} mt="lg" radius="md" sx={(theme) => ({ backgroundColor: theme.colors.dark[7] })}>
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+          <Grid grow gutter="xl" align="center">
+            <Grid.Col md={4} sm={6}>
+              <TextInput label="Vorname" placeholder="Max" required {...form.getInputProps('firstname')} />
+            </Grid.Col>
+            <Grid.Col md={4} sm={6}>
+              <TextInput label="Nachname" placeholder="Mustermann" required {...form.getInputProps('lastname')} />
+            </Grid.Col>
+            <Grid.Col md={4} sm={6}>
+              <Select label="Geschlecht" placeholder="Bitte auswählen" required {...form.getInputProps('gender')}
                 data={[{ value: 'm', label: 'Männlich' }, { value: 'w', label: 'Weiblich' }, { value: 'd', label: 'Divers' }]}
               />
-            </Group>
-            <Group spacing="xs" grow>
-              <DatePicker icon={<Calendar size={16} />} placeholder="Bitte auswählen" label="Geburtsdatum" mt="md" required {...form.getInputProps('birthdate')} />
-              <TextInput label="Geburtsort" placeholder="" mt="md" {...form.getInputProps('place_of_birth')} />
-              <TextInput label="Geburtsname" placeholder="" mt="md" {...form.getInputProps('birthname')} />
-            </Group>
-            <Group spacing="xs" grow>
-              <TextInput label="E-Mail" type="email" placeholder="max@mustermann.de" required mt="md" {...form.getInputProps('email')} />
-            </Group>
-            <Group spacing="xs" grow>
-              <TextInput label="Straße" placeholder="Musterweg" required mt="md" {...form.getInputProps('street')} />
-              <TextInput label="Hausnummer" placeholder="1a" required mt="md" {...form.getInputProps('housenumber')} />
-            </Group>
-            <Group spacing="xs" grow>
-              <NumberInput label="Postleitzahl" placeholder="12345" hideControls required mt="md" {...form.getInputProps('city_code')} min={0} max={99999} step={1} />
-              <TextInput label="Ort" placeholder="Musterhausen" required mt="md" {...form.getInputProps('city')} />
-            </Group>
-            <Button fullWidth mt="lg" type="submit">
-              Jetzt melden
-            </Button>
-          </form>
-        </Paper>
-      </Container >
-    </div >
+            </Grid.Col>
+            <Grid.Col md={4} sm={6}>
+              <DatePicker icon={<Calendar size={16} />} placeholder="Bitte auswählen" label="Geburtsdatum" required {...form.getInputProps('birthdate')} />
+            </Grid.Col>
+            <Grid.Col md={4} sm={6}>
+              <TextInput label="Geburtsort" placeholder="" {...form.getInputProps('place_of_birth')} />
+            </Grid.Col>
+            <Grid.Col md={4} sm={6}>
+              <TextInput label="Geburtsname" placeholder="" {...form.getInputProps('birthname')} />
+            </Grid.Col>
+            <Grid.Col md={4} sm={6}>
+              <TextInput label="E-Mail" type="email" placeholder="max@mustermann.de" required {...form.getInputProps('email')} />
+            </Grid.Col>
+            <Grid.Col md={4} sm={6}>
+              <TextInput label="Straße" placeholder="Musterweg" required {...form.getInputProps('street')} />
+            </Grid.Col>
+            <Grid.Col md={4} sm={6}>
+              <TextInput label="Hausnummer" placeholder="1a" required {...form.getInputProps('housenumber')} />
+            </Grid.Col>
+            <Grid.Col md={4} sm={6}>
+              <NumberInput label="Postleitzahl" placeholder="12345" hideControls required {...form.getInputProps('city_code')} min={0} max={99999} step={1} />
+            </Grid.Col>
+            <Grid.Col md={4} sm={6}>
+              <TextInput label="Ort" placeholder="Musterhausen" required {...form.getInputProps('city')} />
+            </Grid.Col>
+            <Grid.Col md={12}>
+              <Button fullWidth mt="lg" type="submit">
+                Jetzt melden
+              </Button>
+            </Grid.Col>
+          </Grid>
+        </form>
+      </Paper>
+    </Container >
   );
 };
