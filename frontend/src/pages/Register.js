@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { TextInput, Paper, Title, Container, Button, Select, NumberInput, Grid } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { Calendar, Check } from 'tabler-icons-react';
+import { Calendar, Check, ExclamationMark } from 'tabler-icons-react';
 import { showNotification, updateNotification } from '@mantine/notifications';
 
 export const Register = () => {
@@ -43,23 +43,43 @@ export const Register = () => {
   const handleSubmit = (values) => {
     form.clearErrors();
     form.validate();
-    showNotification({
-      id: 'register',
-      title: 'Bitte warten',
-      message: 'Deine Anfrage wird bearbeitet',
-      loading: true
-    });
+    showNotification({ id: 'register', title: 'Bitte warten', message: 'Deine Anfrage wird bearbeitet', loading: true });
     console.log(values);
-    setTimeout(() => {
+    fetch('/api/citizen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(values)
+    }).then(response => {
+      if (response.ok) {
+        console.log(response.body);
+        updateNotification({
+          id: 'register', title: 'Erfolgreich', message: 'Du bist nun in der SmartCity gemeldet',
+          icon: <Check />, loading: false
+        });
+        // form.reset();
+      } else if (response.status === 400) {
+        updateNotification({
+          id: 'register', title: 'Fehler', message: 'Bitte überprüfen Sie Ihre Eingaben',
+          icon: <ExclamationMark />, loading: false, color: 'red'
+        });
+      } else if (response.status === 500) {
+        updateNotification({
+          id: 'register', title: 'Fehler', message: 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut',
+          icon: <ExclamationMark />, loading: false, color: 'red'
+        });
+      } else {
+        updateNotification({
+          id: 'register', title: 'Fehler', message: 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut',
+          icon: <ExclamationMark />, loading: false, color: 'red'
+        });
+      }
+    }).catch(error => {
+      console.error(error);
       updateNotification({
-        id: 'register',
-        title: 'Erfolgreich',
-        message: 'Du bist nun in der SmartCity gemeldet',
-        icon: <Check />,
-        loading: false
+        id: 'register', title: 'Fehler', message: 'Es ist ein Fehler aufgetreten',
+        icon: <ExclamationMark />, loading: false, color: 'red'
       });
-      form.reset();
-    }, 2000);
+    });
   };
 
 
