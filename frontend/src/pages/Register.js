@@ -15,10 +15,34 @@ export const Register = () => {
     initialValues: {
       firstname: '', lastname: '', email: '', birthname: '', birthdate: '', place_of_birth: '',
       gender: '', street: '', housenumber: '', city_code: '', city: ''
+    },
+    validate: {
+      firstname: (value) => (value.length > 0 ? null : 'Bitte geben Sie Ihren Vornamen ein'),
+      lastname: (value) => (value.length > 0 ? null : 'Bitte geben Sie Ihren Nachnamen ein'),
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Bitte geben Sie eine gültige E-Mail-Adresse ein'),
+      birthdate: (value) => {
+        let date = new Date(value);
+        return ((date > 0) ? null : 'Bitte geben Sie ein gültiges Geburtsdatum ein');
+      },
+      gender: (value) => {
+        let possibleValues = ['m', 'w', 'd'];
+        return (possibleValues.includes(value) ? null : 'Bitte wählen Sie ein Geschlecht aus');
+      },
+      street: (values) => (values.length > 0 ? null : 'Bitte geben Sie Ihre Straße ein'),
+      housenumber: (value) => (value.length > 0 ? null : 'Bitte geben Sie Ihre Hausnummer ein'),
+      city_code: (value) => {
+        if (isNaN(value)) {
+          return 'Bitte geben Sie eine gültige Postleitzahl ein';
+        }
+        return parseInt(value) > 0 ? null : 'Bitte geben Sie eine gültige Postleitzahl ein';
+      },
+      city: (value) => (value.length > 0 ? null : 'Bitte geben Sie Ihre Stadt ein')
     }
   });
 
   const handleSubmit = (values) => {
+    form.clearErrors();
+    form.validate();
     showNotification({
       id: 'register',
       title: 'Bitte warten',
@@ -49,18 +73,18 @@ export const Register = () => {
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Grid grow gutter="xl" align="center">
             <Grid.Col md={4} sm={6}>
-              <TextInput label="Vorname" placeholder="Max" required {...form.getInputProps('firstname')} />
+              <TextInput label="Vorname" placeholder="Max" {...form.getInputProps('firstname')} />
             </Grid.Col>
             <Grid.Col md={4} sm={6}>
-              <TextInput label="Nachname" placeholder="Mustermann" required {...form.getInputProps('lastname')} />
+              <TextInput label="Nachname" placeholder="Mustermann" {...form.getInputProps('lastname')} />
             </Grid.Col>
             <Grid.Col md={4} sm={6}>
-              <Select label="Geschlecht" placeholder="Bitte auswählen" required {...form.getInputProps('gender')}
+              <Select label="Geschlecht" placeholder="Bitte auswählen" {...form.getInputProps('gender')}
                 data={[{ value: 'm', label: 'Männlich' }, { value: 'w', label: 'Weiblich' }, { value: 'd', label: 'Divers' }]}
               />
             </Grid.Col>
             <Grid.Col md={4} sm={6}>
-              <DatePicker icon={<Calendar size={16} />} placeholder="Bitte auswählen" label="Geburtsdatum" required {...form.getInputProps('birthdate')} />
+              <DatePicker icon={<Calendar size={16} />} placeholder="Bitte auswählen" label="Geburtsdatum" {...form.getInputProps('birthdate')} />
             </Grid.Col>
             <Grid.Col md={4} sm={6}>
               <TextInput label="Geburtsort" placeholder="" {...form.getInputProps('place_of_birth')} />
@@ -69,19 +93,19 @@ export const Register = () => {
               <TextInput label="Geburtsname" placeholder="" {...form.getInputProps('birthname')} />
             </Grid.Col>
             <Grid.Col md={4} sm={6}>
-              <TextInput label="E-Mail" type="email" placeholder="max@mustermann.de" required {...form.getInputProps('email')} />
+              <TextInput label="E-Mail" type="email" placeholder="max@mustermann.de" {...form.getInputProps('email')} />
             </Grid.Col>
             <Grid.Col md={4} sm={6}>
-              <TextInput label="Straße" placeholder="Musterweg" required {...form.getInputProps('street')} />
+              <TextInput label="Straße" placeholder="Musterweg" {...form.getInputProps('street')} />
             </Grid.Col>
             <Grid.Col md={4} sm={6}>
-              <TextInput label="Hausnummer" placeholder="1a" required {...form.getInputProps('housenumber')} />
+              <TextInput label="Hausnummer" placeholder="1a" {...form.getInputProps('housenumber')} />
             </Grid.Col>
             <Grid.Col md={4} sm={6}>
-              <NumberInput label="Postleitzahl" placeholder="12345" hideControls required {...form.getInputProps('city_code')} min={0} max={99999} step={1} />
+              <NumberInput label="Postleitzahl" placeholder="12345" hideControls {...form.getInputProps('city_code')} min={0} max={99999} step={1} />
             </Grid.Col>
             <Grid.Col md={4} sm={6}>
-              <TextInput label="Ort" placeholder="Musterhausen" required {...form.getInputProps('city')} />
+              <TextInput label="Ort" placeholder="Musterhausen" {...form.getInputProps('city')} />
             </Grid.Col>
             <Grid.Col md={12}>
               <Button fullWidth mt="lg" type="submit">
