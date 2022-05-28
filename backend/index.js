@@ -6,6 +6,7 @@ import * as citizenModel from './citizen/citizen.model.js';
 import * as permitModel from './permits/permits.model.js';
 import * as requestModel from './requests/requests.model.js';
 import express from 'express';
+import cors from 'cors';
 import morgan from 'morgan';
 
 // setup express app
@@ -19,6 +20,8 @@ app.use(express.static('../public'));
 app.use(express.json());
 // needed to handle forms correctly
 app.use(express.urlencoded({ extended: true }));
+// enable CORS
+app.use(cors());
 
 //pass database as middleware to all routes
 //this way the database can be mocked in tests
