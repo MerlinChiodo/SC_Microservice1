@@ -2,11 +2,8 @@ import React, { useEffect } from "react";
 import { TextInput, Paper, Title, Container, Button, Select, NumberInput, Grid } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { Calendar } from 'tabler-icons-react';
-
-const handleSubmit = (values) => {
-  console.log(values);
-};
+import { Calendar, Check } from 'tabler-icons-react';
+import { showNotification, updateNotification } from '@mantine/notifications';
 
 export const Register = () => {
 
@@ -20,6 +17,27 @@ export const Register = () => {
       gender: '', street: '', housenumber: '', city_code: '', city: ''
     }
   });
+
+  const handleSubmit = (values) => {
+    showNotification({
+      id: 'register',
+      title: 'Bitte warten',
+      message: 'Deine Anfrage wird bearbeitet',
+      loading: true
+    });
+    console.log(values);
+    setTimeout(() => {
+      updateNotification({
+        id: 'register',
+        title: 'Erfolgreich',
+        message: 'Du bist nun in der SmartCity gemeldet',
+        icon: <Check />,
+        loading: false
+      });
+      form.reset();
+    }, 2000);
+  };
+
 
   return (
     <Container size={1000} my={40}>
