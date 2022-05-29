@@ -19,7 +19,7 @@ export const Register = () => {
     validate: {
       firstname: (value) => (value.length > 0 ? null : 'Bitte geben Sie Ihren Vornamen ein'),
       lastname: (value) => (value.length > 0 ? null : 'Bitte geben Sie Ihren Nachnamen ein'),
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Bitte geben Sie eine gültige E-Mail-Adresse ein'),
+      email: (value) => (/^\S+@\S+.\S+$/.test(value) ? null : 'Bitte geben Sie eine gültige E-Mail-Adresse ein'),
       birthdate: (value) => {
         let date = new Date(value);
         return ((date > 0) ? null : 'Bitte geben Sie ein gültiges Geburtsdatum ein');
@@ -49,36 +49,25 @@ export const Register = () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(values)
-    }).then(response => {
+    }).then(async (response) => {
       if (response.ok) {
-        console.log(response.body);
-        updateNotification({
-          id: 'register', title: 'Erfolgreich', message: 'Du bist nun in der SmartCity gemeldet',
-          icon: <Check />, loading: false
-        });
-        // form.reset();
+        let result = await response.json();
+        if (result.citizen_created == true && result.citizen_id > 0) {
+          updateNotification({ id: 'register', title: 'Erfolgreich', message: 'Du bist nun in der SmartCity gemeldet', icon: <Check />, loading: false });
+          form.reset();
+        } else {
+          updateNotification({ id: 'register', title: 'Fehler', message: 'Es ist ein unbekannter Fehler aufgetreten', icon: <ExclamationMark />, loading: false, color:'red' });
+        }
       } else if (response.status === 400) {
-        updateNotification({
-          id: 'register', title: 'Fehler', message: 'Bitte überprüfen Sie Ihre Eingaben',
-          icon: <ExclamationMark />, loading: false, color: 'red'
-        });
+        updateNotification({ id: 'register', title: 'Fehler', message: 'Bitte überprüfen Sie Ihre Eingaben', icon: <ExclamationMark />, loading: false, color: 'red' });
       } else if (response.status === 500) {
-        updateNotification({
-          id: 'register', title: 'Fehler', message: 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut',
-          icon: <ExclamationMark />, loading: false, color: 'red'
-        });
+        updateNotification({ id: 'register', title: 'Fehler', message: 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut', icon: <ExclamationMark />, loading: false, color: 'red' });
       } else {
-        updateNotification({
-          id: 'register', title: 'Fehler', message: 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut',
-          icon: <ExclamationMark />, loading: false, color: 'red'
-        });
+        updateNotification({ id: 'register', title: 'Fehler', message: 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut', icon: <ExclamationMark />, loading: false, color: 'red' });
       }
     }).catch(error => {
       console.error(error);
-      updateNotification({
-        id: 'register', title: 'Fehler', message: 'Es ist ein Fehler aufgetreten',
-        icon: <ExclamationMark />, loading: false, color: 'red'
-      });
+      updateNotification({ id: 'register', title: 'Fehler', message: 'Es ist ein Fehler aufgetreten', icon: <ExclamationMark />, loading: false, color: 'red' });
     });
   };
 

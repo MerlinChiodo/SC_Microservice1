@@ -21,8 +21,10 @@ export async function createCitizen(request, response) {
     }
 
     // create citizen in database
-    let citizen_id
+    let citizen_id;
     try {
+        // split birthdate to get only YYYY-MM-DD | react datepicker returns YYYY-MM-DDTHH:mm:ss.SSSZ
+        citizen_input.birthdate = citizen_input.birthdate.split('T')[0];
         citizen_id = await request.citizenModel.createCitizen(citizen_input);
     } catch (error) {
         console.error(error);
