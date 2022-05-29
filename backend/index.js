@@ -1,4 +1,5 @@
 import 'dotenv/config'; //load environment variables
+import * as path from 'path';
 import citizenRouter from './citizen/citizen.router.js';
 import permitRouter from './permits/permits.router.js';
 import requestRouter from './requests/requests.router.js';
@@ -31,10 +32,16 @@ app.use((req, res, next) => {
     req.requestModel = requestModel;
     next();
 });
-// setup routes
+// setup API routes
 app.use("/api/citizen", citizenRouter);
 app.use("/api/permits", permitRouter);
 app.use("/api/requests", requestRouter);
+
+// fix react routing
+const __dirname = path.resolve();
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+});
 
 //get port from environment variables or use default
 const port = process.env.PORT || 3000;
