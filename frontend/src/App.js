@@ -5,14 +5,16 @@ import { Home } from "./pages/Home";
 import { Register } from "./pages/Register";
 import { Requests } from "./pages/Requests";
 import { Licenses } from "./pages/Licenses";
+import { useMantineTheme } from '@mantine/core';
 
 function App() {
+  const theme = useMantineTheme();
   return (
     <Router>
       <NavBar />
-      <div className="pages">
+      <div className="pages" style={{ background: theme.colors.dark[8] }}>
         <Routes>
-          <Route exact path="/" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/melden" element={<Register />} />
           <Route path="/antraege" element={<Requests />} />
           <Route path="/genehmigungen" element={<Licenses />} />

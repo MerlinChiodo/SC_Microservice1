@@ -1,13 +1,4 @@
-* {
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background-color: #c3ccc5;
-}
-
 .pages {
-  color: #262a2c;
-  margin-top: 100px;
+    padding: 100px 5% 0 5%;
+    min-height: 100vh;
 }
