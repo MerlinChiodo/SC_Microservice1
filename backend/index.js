@@ -3,6 +3,7 @@ import * as path from 'path';
 import citizenRouter from './citizen/citizen.router.js';
 import permitRouter from './permits/permits.router.js';
 import requestRouter from './requests/requests.router.js';
+import adminRouter from './admin/admin.router.js';
 import * as citizenModel from './citizen/citizen.model.js';
 import * as permitModel from './permits/permits.model.js';
 import * as requestModel from './requests/requests.model.js';
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
 app.use("/api/citizen", citizenRouter);
 app.use("/api/permits", permitRouter);
 app.use("/api/requests", requestRouter);
+app.use("/api/admin", adminRouter);
 
 // fix react routing
 const __dirname = path.resolve();
