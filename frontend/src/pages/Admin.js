@@ -41,10 +41,10 @@ export const AdminPage = () => {
               <Textarea label="Kurzbeschreibung" minRows={6} placeholder="Dieser Text wird auf der Landingpage angezeigt" {...form.getInputProps('aboutus')} />
             </Grid.Col>
             <Grid.Col span={12}>
-              <TextInput label="Link zur Landingpage" required placeholder="https://www.example.com" type="url" {...form.getInputProps('link')} icon={<Link size={18} />} />
+              <TextInput label="Link zur Landingpage" required placeholder="https://www.example.com" type="url" {...form.getInputProps('link')} icon={<Link size={18} />} value={"http://vps2290194.fastwebserver.de:9710/"} />
             </Grid.Col>
             <Grid.Col span={12}>
-              <TextInput label="Url zum Bild" placeholder="https://www.example.com/image.jpg" type="url" {...form.getInputProps('image')} icon={<CameraPlus size={18} />} />
+              <TextInput label="Url zum Bild" placeholder="https://www.example.com/image.jpg" type="url" {...form.getInputProps('image')} icon={<CameraPlus size={18} />} value={"https://raw.githubusercontent.com/SmartCityProjectGroup/SmartCity/main/Logo_4.png"} />
             </Grid.Col>
             <Grid.Col span={12}>
               <Button fullWidth mt="lg" type="submit">
