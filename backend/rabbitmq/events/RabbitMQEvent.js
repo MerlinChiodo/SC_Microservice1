@@ -19,7 +19,7 @@ export default class RabbitMQEvent {
         this.event_name = name;
         this.#routingKey = routingKey;
         //date format is: DD.MM.YYYYTHH:mm
-        this.date = new Date().toISOString();
+        this.date = new Date().toISOString().slice(0, 19);
     }
 
     getRoutingKey() {

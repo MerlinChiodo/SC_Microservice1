@@ -10,6 +10,7 @@ export default class AboutUsChangeEvent extends RabbitMQEvent {
         this.service_url = service_url;
         this.text = text || '';
         this.picture_url = picture_url || '';
+        this.service_name = 'Bürgerbüro';
     }
 
 }
