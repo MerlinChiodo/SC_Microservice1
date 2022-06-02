@@ -21,12 +21,27 @@ export const AdminPage = () => {
     form.validate();
     showNotification({ id: 'aboutuschange', title: 'Bitte warten', message: 'Deine Anfrage wird bearbeitet', loading: true });
     console.log(values);
-    setTimeout(() => {
-      updateNotification({ id: 'aboutuschange', title: 'Erfolgreich', message: 'Die Daten wurden aktualisiert', icon: <Check />, loading: false });
-      setTimeout(() => {
-        updateNotification({ id: 'aboutuschange', title: 'Fehler', message: 'Die Daten konnten nicht aktualisiert werden', icon: <ExclamationMark />, loading: false, color: "red" });
-      }, 2000);
-    }, 2000);
+    fetch('/api/admin/aboutus', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(values)
+    }).then(async (response) => {
+      if (response.ok) {
+        let result = await response.json();
+        if (result.aboutus_changed === true) {
+          updateNotification({ id: 'aboutuschange', title: 'Erfolgreich', message: 'Die Änderungen wurden gespeichert', icon: <Check />, loading: false });
+          form.reset();
+        } else {
+          updateNotification({ id: 'aboutuschange', title: 'Fehler', message: 'Es ist ein unbekannter Fehler aufgetreten', icon: <ExclamationMark />, loading: false, color: 'red' });
+        }
+      } else if (response.status === 400) {
+        updateNotification({ id: 'aboutuschange', title: 'Fehler', message: 'Bitte überprüfe deine Eingaben', icon: <ExclamationMark />, loading: false, color: 'red' });
+      } else {
+        updateNotification({ id: 'aboutuschange', title: 'Fehler', message: 'Es ist ein unbekannter Fehler aufgetreten', icon: <ExclamationMark />, loading: false, color: 'red' });
+      }
+    }).catch(() => {
+      updateNotification({ id: 'aboutuschange', title: 'Fehler', message: 'Es ist ein unbekannter Fehler aufgetreten', icon: <ExclamationMark />, loading: false, color: 'red' });
+    });
   };
 
   return (
@@ -41,10 +56,10 @@ export const AdminPage = () => {
               <Textarea label="Kurzbeschreibung" minRows={6} placeholder="Dieser Text wird auf der Landingpage angezeigt" {...form.getInputProps('aboutus')} />
             </Grid.Col>
             <Grid.Col span={12}>
-              <TextInput label="Link zur Landingpage" required placeholder="https://www.example.com" type="url" {...form.getInputProps('link')} icon={<Link size={18} />} value={"http://vps2290194.fastwebserver.de:9710/"} />
+              <TextInput label="Link zur Landingpage" required placeholder="https://www.example.com" type="url" {...form.getInputProps('link')} icon={<Link size={18} />} description="zum Beispiel: http://vps2290194.fastwebserver.de:9710/" />
             </Grid.Col>
             <Grid.Col span={12}>
-              <TextInput label="Url zum Bild" placeholder="https://www.example.com/image.jpg" type="url" {...form.getInputProps('image')} icon={<CameraPlus size={18} />} value={"https://raw.githubusercontent.com/SmartCityProjectGroup/SmartCity/main/Logo_4.png"} />
+              <TextInput label="Url zum Bild" placeholder="https://www.example.com/image.jpg" type="url" {...form.getInputProps('image')} icon={<CameraPlus size={18} />} description="zu Beispiel: https://raw.githubusercontent.com/SmartCityProjectGroup/SmartCity/main/Logo_4.png" />
             </Grid.Col>
             <Grid.Col span={12}>
               <Button fullWidth mt="lg" type="submit">
