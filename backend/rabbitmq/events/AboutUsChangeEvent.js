@@ -7,9 +7,9 @@ export default class AboutUsChangeEvent extends RabbitMQEvent {
         if (typeof service_url !== 'string' || service_url.length === 0) {
             throw new Error('Service URL must be a non-empty string!');
         }
-        this.service_url = service_url;
-        this.text = text || '';
-        this.picture_url = picture_url || '';
+        this.url = service_url;
+        this.about_us = text || '';
+        this.picture = picture_url || '';
         this.service_name = 'Bürgerbüro';
     }
 
