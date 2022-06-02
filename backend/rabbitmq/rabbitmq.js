@@ -16,6 +16,7 @@ export default class RabbitMQWrapper {
                 }
                 channel.publish('events', routingKey, Buffer.from(JSON.stringify(event)));
                 console.log(`RabbitMQ: sent event ${event}`);
+                connection.close();
             });
         });
     }
