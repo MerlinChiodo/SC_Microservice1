@@ -2,16 +2,15 @@ import RabbitMQEvent from "./RabbitMQEvent.js";
 
 export default class AboutUsChangeEvent extends RabbitMQEvent {
 
-    constructor(text, picture_url) {
-        super('About Us', 1000, 'public.buergerbuero');
-        if (typeof text !== 'string' || text.length === 0) {
-            throw new Error('Text must be a non-empty string!');
+    constructor(service_url, text, picture_url) {
+        super('Updated About US', 1000, 'public.buergerbuero');
+        if (typeof service_url !== 'string' || service_url.length === 0) {
+            throw new Error('Service URL must be a non-empty string!');
         }
-        if (typeof picture_url !== 'string' || picture_url.length === 0) {
-            throw new Error('Picture url must be a non-empty string!');
-        }
-        this.text = text;
-        this.picture_url = picture_url;
+        this.url = service_url;
+        this.about_us = text || '';
+        this.picture = picture_url || '';
+        this.service_name = 'Bürgerbüro';
     }
 
 }

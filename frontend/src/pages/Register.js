@@ -52,7 +52,7 @@ export const Register = () => {
     }).then(async (response) => {
       if (response.ok) {
         let result = await response.json();
-        if (result.citizen_created == true && result.citizen_id > 0) {
+        if (result.citizen_created === true && result.citizen_id > 0) {
           updateNotification({ id: 'register', title: 'Erfolgreich', message: 'Du bist nun in der SmartCity gemeldet', icon: <Check />, loading: false });
           form.reset();
         } else {

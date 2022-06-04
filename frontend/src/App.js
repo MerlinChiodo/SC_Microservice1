@@ -6,6 +6,7 @@ import { Register } from "./pages/Register";
 import { Requests } from "./pages/Requests";
 import { Licenses } from "./pages/Licenses";
 import { useMantineTheme } from '@mantine/core';
+import { AdminPage } from "./pages/Admin";
 
 function App() {
   const theme = useMantineTheme();
@@ -18,6 +19,7 @@ function App() {
           <Route path="/melden" element={<Register />} />
           <Route path="/antraege" element={<Requests />} />
           <Route path="/genehmigungen" element={<Licenses />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </div>
     </Router>
