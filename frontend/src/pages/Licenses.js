@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Paper, Title, Container, Table, ScrollArea, createStyles, Badge } from '@mantine/core';
+import { Table, ScrollArea, createStyles, Badge } from '@mantine/core';
+import { PageContainer } from "../components/PageContainer";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -59,35 +60,29 @@ export const Licenses = () => {
   }, []);
 
   return (
-    <Container size={1200} my={40}>
-      <Title align="center" order={1} sx={() => ({ fontWeight: 900 })} >
-        Meine Genehmigungen.
-      </Title>
-
-      <Paper withBorder shadow="md" p={30} mt="lg" radius="md" sx={(theme) => ({ backgroundColor: theme.colors.dark[7] })}>
-        <ScrollArea sx={{ height: 300 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
-          <Table sx={{ minWidth: 700 }} highlightOnHover>
-            <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
+    <PageContainer title="Meine Genehmigungen" size={1200}>
+      <ScrollArea sx={{ height: 300 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+        <Table sx={{ minWidth: 700 }} highlightOnHover>
+          <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
+            <tr>
+              <th>Name</th>
+              <th>Ausgestellt am</th>
+              <th>Gültig bis</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(permit => (
               <tr>
-                <th>Name</th>
-                <th>Ausgestellt am</th>
-                <th>Gültig bis</th>
-                <th>Status</th>
+                <td>{permit.title}</td>
+                <td>{formatDate(permit.date_of_issue)}</td>
+                <td>{formatDate(permit.valid_until)}</td>
+                <td>{getBagde(permit.status)}</td>
               </tr>
-            </thead>
-            <tbody>
-              {rows.map(permit => (
-                <tr>
-                  <td>{permit.title}</td>
-                  <td>{formatDate(permit.date_of_issue)}</td>
-                  <td>{formatDate(permit.valid_until)}</td>
-                  <td>{getBagde(permit.status)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </ScrollArea>
-      </Paper>
-    </Container >
+            ))}
+          </tbody>
+        </Table>
+      </ScrollArea>
+    </PageContainer>
   );
 };
