@@ -1,3 +1,4 @@
+import pool from '../util/mysql.js';
 
 /* -------------------------------------------------------------------------- */
 /*                              permits.model.js                              */
@@ -30,12 +31,11 @@ export async function deletePermit(permit_id) {
 };
 
 export async function getAllPermits() {
-    //TODO get from database
     //returns all permits
-    return [
-        { permit_id: 1, title: 'Titel 1', description: 'Beschreibung 1' },
-        { permit_id: 2, title: 'Titel 2', description: 'Beschreibung 2' }
-    ];
+    const promisePool = pool.promise();
+    const sql = `SELECT * FROM Permit;`;
+    const [rows, fields] = await promisePool.execute(sql);
+    return rows;
 };
 
 export async function createPermitRequest(permit_id, citizen_id) {
