@@ -70,7 +70,7 @@ export async function getChildrenIds(citizen_id) {
  */
 export async function hasDogPermit(citizen_id) {
     const promisePool = MySQLWrapper.createOrGetPool().promise();
-    const sql = `SELECT * FROM Permits WHERE permit_id = 2 AND citizen_id = ? AND date_of_issue < CURRENT_DATE() AND(valid_until IS NULL OR valid_until > CURRENT_DATE());`;
+    const sql = `SELECT * FROM Permits WHERE permit_id = 2 AND citizen_id = ? AND date_of_issue IS NOT NULL AND date_of_issue < CURRENT_DATE() AND(valid_until IS NULL OR valid_until > CURRENT_DATE());`;
     const [rows, fields] = await promisePool.execute(sql, [citizen_id]);
     return rows.length > 0;
 }
@@ -97,7 +97,17 @@ export async function getSpouseId(citizen_id) {
  */
 export async function getPermits(citizen_id) {
     const promisePool = MySQLWrapper.createOrGetPool().promise();
-    const sql = `SELECT * FROM Permits WHERE citizen_id = ? AND date_of_issue < CURRENT_DATE() AND(valid_until IS NULL OR valid_until > CURRENT_DATE());`;
+    const sql = `SELECT
+                    Permits.citizen_id,
+                    Permits.permit_id,
+                    Permits.date_of_issue,
+                    Permits.valid_until,
+                    Permits.status,
+                    Permit.title,
+                    Permit.description
+                FROM Permits
+                JOIN Permit ON Permit.permit_id = Permits.permit_id
+                WHERE Permits.citizen_id = ?;`;
     const [rows, fields] = await promisePool.execute(sql, [citizen_id]);
     return rows.length > 0 ? rows : [];
 }

@@ -34,6 +34,25 @@ export const Licenses = () => {
       .catch(error => console.error(error));
   };
 
+  //formats a given datestring to the format dd.mm.yyyy or `-` if date is null
+  const formatDate = (date) => {
+    if (date == null) {
+      return "-";
+    }
+    return new Date(date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
+
+  const getBagde = (status) => {
+    switch (status) {
+      case "gültig":
+        return (<Badge color="green" size="lg">{status}</Badge>);
+      case "abgelaufen":
+        return (<Badge color="red" size="lg">{status}</Badge>);
+      default:
+        return (<Badge color="yellow" size="lg">{status}</Badge>);
+    }
+  }
+
   useEffect(() => {
     document.title = "Bürgerbüro - Genehmigungen";
     fetchData();
@@ -60,9 +79,9 @@ export const Licenses = () => {
               {rows.map(permit => (
                 <tr>
                   <td>{permit.title}</td>
-                  <td>{permit.date_of_issue}</td>
-                  <td>{permit.valid_until}</td>
-                  <td><Badge color="green" size="lg">Ausgestellt</Badge></td>
+                  <td>{formatDate(permit.date_of_issue)}</td>
+                  <td>{formatDate(permit.valid_until)}</td>
+                  <td>{getBagde(permit.status)}</td>
                 </tr>
               ))}
             </tbody>
