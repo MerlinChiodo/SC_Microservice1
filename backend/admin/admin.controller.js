@@ -1,6 +1,6 @@
 import { validate } from 'jsonschema';
 import { ChangeAboutusSchema } from './admin.jsonschema.js';
-import AboutusChangeEvent from '../rabbitmq/events/AboutusChangeEvent.js';
+import AboutUsChangeEvent from '../rabbitmq/events/AboutUsChangeEvent.js';
 import RabbitMQWrapper from '../rabbitmq/rabbitmq.js';
 
 /* -------------------------------------------------------------------------- */
@@ -19,7 +19,7 @@ export async function changeAboutus(request, response) {
 
     //send event via rabbitmq
     try {
-        RabbitMQWrapper.publish(new AboutusChangeEvent(body.link, body.aboutus, body.image));
+        RabbitMQWrapper.publish(new AboutUsChangeEvent(body.link, body.aboutus, body.image));
     } catch (error) {
         console.error(error);
         return response.status(500).json({ aboutus_changed: false, errors: ['Error whilst connecting to RabbitMQ'] });
