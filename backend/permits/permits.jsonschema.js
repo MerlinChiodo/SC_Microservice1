@@ -2,7 +2,7 @@
 const PermitID = {
     id: "/PermitID",
     type: "string",
-    pattern: "^[1-9]\d*$"
+    pattern: "^[1-9]\\d*$"
 };
 
 const NewPermitSchema = {

@@ -21,7 +21,7 @@ const NewCitizenSchema = {
 const CitizenIDSchema = {
     id: "/CitizenIDSchema",
     type: "string",
-    pattern: "^[1-9]\d*$"
+    pattern: "^[1-9]\\d*$"
 }
 
 export { NewCitizenSchema, CitizenIDSchema };

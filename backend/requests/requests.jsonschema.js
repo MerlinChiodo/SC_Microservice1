@@ -18,7 +18,7 @@ const NewRequestSchema = {
 const RequestIDSchema = {
     id: '/RequestIDSchema',
     type: 'string',
-    pattern: '^[1-9]\d*$'
+    pattern: '^[1-9]\\d*$'
 };
 
 export { NewRequestSchema, RequestIDSchema };
