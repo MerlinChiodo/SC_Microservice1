@@ -1,12 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm } from '@mantine/form';
-import { Modal, Grid, Button, Textarea, Select } from "@mantine/core";
+import { Modal, Grid, Button, Textarea, Select, createStyles, Text, useMantineTheme } from "@mantine/core";
 import { showNotification, updateNotification } from "@mantine/notifications";
+import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 import { Check, ExclamationMark } from "tabler-icons-react";
+
+const useStyles = createStyles((theme) => ({
+    wrapper: { position: 'relative', marginBottom: 40, },
+    dropzone: { borderWidth: 1, padding:0, paddingBottom: 25, },
+    control: { position: 'absolute', width: 250, left: 'calc(50% - 125px)', bottom: -20, },
+}));
+
+function getActiveColor(status, theme) {
+    return status.accepted ? theme.colors[theme.primaryColor][6] : status.rejected ? theme.colors.red[6] : theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black;
+}
 
 export const NewLicenseModal = (props) => {
 
     const [value, setValue] = useState('');
+    const theme = useMantineTheme();
+    const { classes } = useStyles();
+    const openRef = useRef();
 
     const form = useForm({
         initialValues: {
@@ -61,6 +75,29 @@ export const NewLicenseModal = (props) => {
                     </Grid.Col>
                     <Grid.Col span={12}>
                         <Textarea label="Antragsbeschreibung" minRows={6} placeholder="Beschreibe kurz wofür diese Genehmigung gebraucht wird" {...form.getInputProps('description')} />
+                    </Grid.Col>
+                    <Grid.Col span={12}>
+                        <div className={classes.wrapper}>
+                            <Dropzone
+                                onReject={(files) => console.log('rejected files', files)}
+                                onDrop={(files) => console.log('accepted files', files)}
+                                openRef={openRef} className={classes.dropzone} radius="md" accept={[MIME_TYPES.pdf]} maxSize={5 * 1024 ** 2}
+                            >
+                                {(status) => (
+                                    <div style={{ pointerEvents: 'none' }}>
+                                        <Text align="center" weight={700} size="lg" mt="xl" sx={{ color: getActiveColor(status, theme) }} >
+                                            {status.accepted ? 'Dateien hier ablegen' : status.rejected ? 'Pdf-Dateien kleiner als 5mb' : 'Dateien anhängen'}
+                                        </Text>
+                                        <Text align="center" size="sm" mt="xs" color="dimmed">
+                                            Dateien hierher verschieben um sie dem Antrag anzuhängen.
+                                            <br />
+                                            Es sind nur <i>.pdf</i> Dateien die kleiner als 5mb sind erlaubt.
+                                        </Text>
+                                    </div>
+                                )}
+                            </Dropzone>
+                            <Button className={classes.control} size="sm" radius="lg" onClick={() => openRef.current()}>Dateien auswählen</Button>
+                        </div>
                     </Grid.Col>
                     <Grid.Col span={12}>
                         <Button fullWidth type="submit">Beantragen</Button>
