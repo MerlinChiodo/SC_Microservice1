@@ -38,9 +38,15 @@ export async function getAllPermits() {
     return rows;
 };
 
-export async function createPermitRequest(permit_id, citizen_id) {
-    //TODO save in database
+export async function createPermitRequest(permit_id, citizen_id, description) {
     //create a new permit request in the database
+    const promisePool = pool.promise();
+    const sql = `INSERT INTO Permits (permit_id, citizen_id, description, status) VALUES (?, ?, ?, 'offen');`;
+    const values = [permit_id, citizen_id, description];
+    const [results, fields] = await promisePool.execute(sql, values);
+    if (results.affectedRows === 0) {
+        return false;
+    }
     return true;
 };
 

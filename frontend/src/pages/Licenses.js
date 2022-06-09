@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Table, ScrollArea, createStyles, Badge, Button } from '@mantine/core';
+import { Table, ScrollArea, createStyles, Badge, Button, Grid } from '@mantine/core';
 import { PageContainer } from "../components/PageContainer";
 import { NewLicenseModal } from "../components/NewLicenseModal";
-import { Plus } from "tabler-icons-react";
+import { Plus, Refresh } from "tabler-icons-react";
+import { getMyCitizenID } from "../util/Util";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -34,7 +35,8 @@ export const Licenses = () => {
   const [permits, setPermits] = useState([]);
 
   const fetchData = () => {
-    fetch('/api/citizen/1/permits')
+    let citizenID = getMyCitizenID();
+    fetch(`/api/citizen/${citizenID}/permits`)
       .then(response => response.json())
       .then(data => setUserPermits(data.permits))
       .catch(error => console.error(error));
@@ -67,13 +69,18 @@ export const Licenses = () => {
 
   return (
     <>
-      <NewLicenseModal setOpen={setOpened} opened={opened} permits={permits} />
+      <NewLicenseModal setOpen={setOpened} opened={opened} permits={permits} refresh={fetchData} />
       <PageContainer title="Meine Genehmigungen" size={1200}>
+        <Grid gutter="lg">
+          <Grid.Col span={12} sm={6}>
+            <Button fullWidth color="green" leftIcon={<Plus size={18} />} onClick={() => setOpened(true)}>Neue Genehmigung beantragen</Button>
+          </Grid.Col>
+          <Grid.Col span={12} sm={6}>
+            <Button fullWidth color="green" leftIcon={<Refresh size={18} />} onClick={fetchData}>Aktualisieren</Button>
+          </Grid.Col>
+        </Grid>
         <ScrollArea sx={{ height: 300 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
           <Table sx={{ minWidth: 700 }} highlightOnHover>
-            <caption>
-              <Button color="green" leftIcon={<Plus size={18} />} onClick={() => setOpened(true)}>Neue Genehmigung beantragen</Button>
-            </caption>
             <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
               <tr>
                 <th>Name</th>

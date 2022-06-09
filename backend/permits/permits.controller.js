@@ -132,7 +132,8 @@ export async function createPermitRequest(request, response) {
     //create permit request in database
     let success;
     try {
-        success = await request.permitModel.createPermitRequest(input.permit_id, input.citizen_id);
+        let description = input.description || null;
+        success = await request.permitModel.createPermitRequest(input.permit_id, input.citizen_id, description);
         if (!success) { return response.status(400).json({ errors: ['Could not create permit request'] }); }
     } catch (error) {
         console.error(error);
