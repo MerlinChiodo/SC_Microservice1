@@ -107,7 +107,8 @@ export async function getPermits(citizen_id) {
                     Permit.description
                 FROM Permits
                 JOIN Permit ON Permit.permit_id = Permits.permit_id
-                WHERE Permits.citizen_id = ?;`;
+                WHERE Permits.citizen_id = ?
+                ORDER BY Permits.permits_id DESC;`;
     const [rows, fields] = await promisePool.execute(sql, [citizen_id]);
     return rows.length > 0 ? rows : [];
 }
