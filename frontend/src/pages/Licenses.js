@@ -65,10 +65,6 @@ export const Licenses = () => {
     fetchData();
   }, []);
 
-  const openModal = () => {
-    setOpened(true);
-  };
-
   return (
     <>
       <NewLicenseModal setOpen={setOpened} opened={opened} permits={permits} />
@@ -76,7 +72,7 @@ export const Licenses = () => {
         <ScrollArea sx={{ height: 300 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
           <Table sx={{ minWidth: 700 }} highlightOnHover>
             <caption>
-              <Button color="green" leftIcon={<Plus size={18} />} onClick={openModal}>Neue Genehmigung beantragen</Button>
+              <Button color="green" leftIcon={<Plus size={18} />} onClick={() => setOpened(true)}>Neue Genehmigung beantragen</Button>
             </caption>
             <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
               <tr>
