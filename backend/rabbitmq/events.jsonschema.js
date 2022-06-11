@@ -11,4 +11,43 @@ const BasicEvent = {
     required: ["event_name", "event_id", "service_name", "date"]
 };
 
-export { BasicEvent };
+const Refugee = {
+    id: "/Refugee",
+    type: "object",
+    properties: {
+        firstname: { type: "string", minLength: 1 },
+        lastname: { type: "string", minLength: 1 },
+        "date of birth": { type: "string", format: "date" },
+        email: { type: "string", format: "email" }
+    },
+    required: ["firstname", "lastname", "date of birth", "email"]
+};
+
+
+const NewRefugeeEvent = {
+    id: "/NewRefugeeEvent",
+    type: "object",
+    properties: {
+        event_name: { type: "string", minLength: 1 },
+        event_id: { type: "integer", minimum: 9000, maximum: 9999 },
+        service_name: { type: "string", pattern: "integration" },
+        refugee: { $ref: "/Refugee" }
+    },
+    required: ["refugee", "event_id", "event_name", "service_name"]
+};
+
+const NewRefugeeFamilyEvent = {
+    id: "/NewRefugeeFamilyEvent",
+    type: "object",
+    properties: {
+        event_name: { type: "string", minLength: 1 },
+        event_id: { type: "integer", minimum: 9000, maximum: 9999 },
+        service_name: { type: "string", pattern: "integration" },
+        parents: { type: "array", items: { $ref: "/Refugee" } },
+        children: { type: "array", items: { $ref: "/Refugee" } }
+    },
+    required: ["parents", "children", "event_id", "event_name", "service_name"]
+};
+
+
+export { BasicEvent, Refugee, NewRefugeeEvent, NewRefugeeFamilyEvent };

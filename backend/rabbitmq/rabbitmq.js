@@ -1,6 +1,7 @@
 import amqp from 'amqplib/callback_api.js';
 import { validate } from 'jsonschema';
 import { BasicEvent } from './events.jsonschema.js';
+import * as EventHandler from './eventhandler.js';
 
 export default class RabbitMQWrapper {
 
@@ -55,7 +56,7 @@ export default class RabbitMQWrapper {
 
     static async handleEvent(message) {
         try {
-            console.log(`\x1b[36m[RabbitMQ]\x1b[0m recieved event: ${message.replace(/(?:\r\n|\r|\n)/g, ' ')}`);
+            console.log(`\x1b[36m[RabbitMQ]\x1b[0m recieved event: ${message.replace(/(?:\r\n|\r|\n|\s+)/g, ' ')}`);
             const event = JSON.parse(message);
 
             //validate event
@@ -66,7 +67,20 @@ export default class RabbitMQWrapper {
             }
 
             //event is valid
-            console.error('\x1b[36m[RabbitMQ]\x1b[0m Event is valid');
+            console.log(`\x1b[36m[RabbitMQ]\x1b[0m received event: \x1b[33;2m${event.event_name}\x1b[0m with id \x1b[33;2m${event.event_id}\x1b[0m`);
+            switch (event.event_id) {
+                case 9000:
+                    EventHandler.handleRefugeeEvent(event);
+                    break;
+
+                case 9001:
+                    EventHandler.handleRefugeeFamilyEvent(event);
+                    break;
+            
+                default:
+                    console.log(`\x1b[36m[RabbitMQ]\x1b[0m received unknown event \x1b[31;2m${event.event_name}\x1b[0m with id \x1b[31;2m${event.event_id}\x1b[0m`);
+                    break;
+            }
         } catch (error) {
             console.error(`\x1b[36m[RabbitMQ]\x1b[0m Error while handling event: ${error}`);
         }
