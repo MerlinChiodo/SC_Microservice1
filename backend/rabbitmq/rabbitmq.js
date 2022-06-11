@@ -8,7 +8,7 @@ export default class RabbitMQWrapper {
     static #connectionString = process.env.RABBITMQ_URL;
 
     static async publish(event) {
-        console.log(`\x1b[36m[RabbitMQ]\x1b[0m attempting to sent event: ${event}`);
+        this.log(` attempting to sent event: ${event}`);
         amqp.connect(RabbitMQWrapper.#connectionString, { keepAlive: true }, (connectError, connection) => {
             if (connectError) { throw connectError; }
             connection.createChannel((channelError, channel) => {
@@ -18,7 +18,7 @@ export default class RabbitMQWrapper {
                     delete event.event_id; //changes the event when run in local enviroment
                 }
                 channel.publish('events', routingKey, Buffer.from(JSON.stringify(event)));
-                console.log(`\x1b[36m[RabbitMQ]\x1b[0m sent event: ${event}`);
+                this.log(` sent event: ${event}`);
             });
             setTimeout(() => {
                 connection.close();
@@ -29,20 +29,20 @@ export default class RabbitMQWrapper {
     static async startListener() {
         amqp.connect(RabbitMQWrapper.#connectionString, (connectError, connection) => {
             if (connectError) {
-                console.error(`\x1b[36m[RabbitMQ]\x1b[0m Error while connecting to ${connectError}`);
+                this.error(`Error while connecting: ${connectError}`);
                 return setTimeout(RabbitMQWrapper.startListener, 1000);
             }
             connection.on('error', (error) => {
-                console.error(`\x1b[36m[RabbitMQ]\x1b[0m Error ${error}`);
+                this.error(`Error: ${error}`);
                 return setTimeout(RabbitMQWrapper.startListener, 1000);
             });
             connection.on('close', () => {
-                console.error(`\x1b[36m[RabbitMQ]\x1b[0m Connection closed`);
+                this.error(`Connection closed`);
                 return setTimeout(RabbitMQWrapper.startListener, 1000);
             });
             connection.createChannel((channelError, channel) => {
                 if (channelError) { return 0; }
-                console.log('\x1b[36m[RabbitMQ]\x1b[0m Listening for events')
+                this.log('Listening for events');
 
                 channel.consume('buergerbuero', async (msg) => {
                     //consume incoming event
@@ -56,18 +56,18 @@ export default class RabbitMQWrapper {
 
     static async handleEvent(message) {
         try {
-            console.log(`\x1b[36m[RabbitMQ]\x1b[0m recieved event: ${message.replace(/(?:\r\n|\r|\n|\s+)/g, ' ')}`);
+            this.log(` recieved event: ${message.replace(/(?:\r\n|\r|\n|\s+)/g, ' ')}`);
             const event = JSON.parse(message);
 
             //validate event
             const validationResult = validate(event, BasicEvent);
             if (validationResult.errors.length > 0) {
-                console.error(`\x1b[36m[RabbitMQ]\x1b[0m Error while validating event: ${validationResult.errors}`);
+                this.error(`Error while validating event \x1b[31;2m${event.event_name}\x1b[0m: ${validationResult.errors}`);
                 return;
             }
 
             //event is valid
-            console.log(`\x1b[36m[RabbitMQ]\x1b[0m received event: \x1b[33;2m${event.event_name}\x1b[0m with id \x1b[33;2m${event.event_id}\x1b[0m`);
+            this.log(`received event: \x1b[33;2m${event.event_name}\x1b[0m with id \x1b[33;2m${event.event_id}`);
             switch (event.event_id) {
                 case 9000:
                     EventHandler.handleRefugeeEvent(event);
@@ -76,14 +76,22 @@ export default class RabbitMQWrapper {
                 case 9001:
                     EventHandler.handleRefugeeFamilyEvent(event);
                     break;
-            
+
                 default:
-                    console.log(`\x1b[36m[RabbitMQ]\x1b[0m received unknown event \x1b[31;2m${event.event_name}\x1b[0m with id \x1b[31;2m${event.event_id}\x1b[0m`);
+                    this.log(`received unknown event \x1b[31;2m${event.event_name}\x1b[0m with id \x1b[31;2m${event.event_id}`);
                     break;
             }
         } catch (error) {
-            console.error(`\x1b[36m[RabbitMQ]\x1b[0m Error while handling event: ${error}`);
+            this.error(`Error while handling event: ${error}`);
         }
+    }
+
+    static log(message) {
+        console.log(`\x1b[36m[RabbitMQ]\x1b[0m ${message}\x1b[0m`);
+    }
+
+    static error(message) {
+        console.error(`\x1b[36m[RabbitMQ]\x1b[0m ${message}\x1b[0m`);
     }
 
 }
