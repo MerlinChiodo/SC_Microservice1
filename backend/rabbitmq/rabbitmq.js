@@ -8,7 +8,7 @@ export default class RabbitMQWrapper {
     static #connectionString = process.env.RABBITMQ_URL;
 
     static async publish(event) {
-        this.log(` attempting to sent event: ${event}`);
+        RabbitMQWrapper.log(`attempting to sent event: ${event}`);
         amqp.connect(RabbitMQWrapper.#connectionString, { keepAlive: true }, (connectError, connection) => {
             if (connectError) { throw connectError; }
             connection.createChannel((channelError, channel) => {
@@ -18,7 +18,7 @@ export default class RabbitMQWrapper {
                     delete event.event_id; //changes the event when run in local enviroment
                 }
                 channel.publish('events', routingKey, Buffer.from(JSON.stringify(event)));
-                this.log(` sent event: ${event}`);
+                RabbitMQWrapper.log(`sent event: ${event}`);
             });
             setTimeout(() => {
                 connection.close();
@@ -29,20 +29,20 @@ export default class RabbitMQWrapper {
     static async startListener() {
         amqp.connect(RabbitMQWrapper.#connectionString, (connectError, connection) => {
             if (connectError) {
-                this.error(`Error while connecting: ${connectError}`);
+                RabbitMQWrapper.error(`Error while connecting: ${connectError}`);
                 return setTimeout(RabbitMQWrapper.startListener, 1000);
             }
             connection.on('error', (error) => {
-                this.error(`Error: ${error}`);
+                RabbitMQWrapper.error(`Error: ${error}`);
                 return setTimeout(RabbitMQWrapper.startListener, 1000);
             });
             connection.on('close', () => {
-                this.error(`Connection closed`);
+                RabbitMQWrapper.error(`Connection closed, restarting now.......`);
                 return setTimeout(RabbitMQWrapper.startListener, 1000);
             });
             connection.createChannel((channelError, channel) => {
                 if (channelError) { return 0; }
-                this.log('Listening for events');
+                RabbitMQWrapper.log('Listening for events');
 
                 channel.consume('buergerbuero', async (msg) => {
                     //consume incoming event
