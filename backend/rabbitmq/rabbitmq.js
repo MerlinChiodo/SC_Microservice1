@@ -1,4 +1,6 @@
-import amqp from 'amqplib/callback_api.js'
+import amqp from 'amqplib/callback_api.js';
+import { validate } from 'jsonschema';
+import { BasicEvent } from './events.jsonschema.js';
 
 export default class RabbitMQWrapper {
 
@@ -53,17 +55,20 @@ export default class RabbitMQWrapper {
 
     static async handleEvent(message) {
         try {
-            console.log(`\x1b[36m[RabbitMQ]\x1b[0m recieved event: ${message}`);
-            let event = JSON.parse(message);
-            //check if event is valid
-            if (false) {
-                //event is valid
-            } else {
-                //event is invalid
-                console.error('\x1b[36m[RabbitMQ]\x1b[0m Error while validating event');
+            console.log(`\x1b[36m[RabbitMQ]\x1b[0m recieved event: ${message.replace(/(?:\r\n|\r|\n)/g, ' ')}`);
+            const event = JSON.parse(message);
+
+            //validate event
+            const validationResult = validate(event, BasicEvent);
+            if (validationResult.errors.length > 0) {
+                console.error(`\x1b[36m[RabbitMQ]\x1b[0m Error while validating event: ${validationResult.errors}`);
+                return;
             }
+
+            //event is valid
+            console.error('\x1b[36m[RabbitMQ]\x1b[0m Event is valid');
         } catch (error) {
-            console.error(`\x1b[36m[RabbitMQ]\x1b[0m Error while parsing event: ${error}`);
+            console.error(`\x1b[36m[RabbitMQ]\x1b[0m Error while handling event: ${error}`);
         }
     }
 
