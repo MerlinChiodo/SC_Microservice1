@@ -1,5 +1,6 @@
 import request from 'supertest';
 import RabbitMQWrapper from '../rabbitmq/rabbitmq.js';
+import MySQLWrapper from '../util/mysql.js';
 import { jest } from '@jest/globals'
 import requestsRouter from '../requests/requests.router.js';
 import express from 'express';
@@ -32,6 +33,8 @@ describe('Request API', () => {
         jest.spyOn(RabbitMQWrapper, 'publish').mockImplementation(() => { });
         //mock smartauth while testing, to not call the microservice
         jest.spyOn(SmartAuth, 'getPermissions').mockImplementation(() => { return true; });
+        //mock mysql connection pool creation
+        jest.spyOn(MySQLWrapper, 'createOrGetPool').mockImplementation(() => { });
     });
 
     beforeEach(() => {
@@ -47,12 +50,14 @@ describe('Request API', () => {
         console.error.mockClear();
         RabbitMQWrapper.publish.mockClear();
         SmartAuth.getPermissions.mockClear();
+        MySQLWrapper.createOrGetPool.mockClear();
     });
 
     afterAll(() => {
         console.error.mockRestore();
         RabbitMQWrapper.publish.mockRestore();
         SmartAuth.getPermissions.mockRestore();
+        MySQLWrapper.createOrGetPool.mockRestore();
     });
 
     describe('POST /api/requests', () => {

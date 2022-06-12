@@ -1,4 +1,4 @@
-import pool from '../util/mysql.js';
+import MySQLWrapper from "../util/mysql.js";
 
 /* -------------------------------------------------------------------------- */
 /*                              citizen.model.js                              */
@@ -12,7 +12,7 @@ import pool from '../util/mysql.js';
  * @returns {int} the id of the new citizen
 */
 export async function createCitizen(citizen) {
-    const promisePool = pool.promise();
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
     const sql = `INSERT INTO Citizen(firstname, lastname, gender, birthname, place_of_birth, birthdate, email, street, housenumber, city_code, city)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
     const values = [
@@ -41,7 +41,7 @@ export async function createCitizen(citizen) {
  * @returns {Object} the citizen or null
  */
 export async function getCitizenById(citizen_id) {
-    const promisePool = pool.promise();
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
     const sql = `SELECT * FROM Citizen WHERE citizen_id = ? LIMIT 1;`;
     const [rows, fields] = await promisePool.execute(sql, [citizen_id]);
     return rows.length > 0 ? rows[0] : null;
@@ -53,7 +53,7 @@ export async function getCitizenById(citizen_id) {
  * @returns {Array} the child ids
  */
 export async function getChildrenIds(citizen_id) {
-    const promisePool = pool.promise();
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
     const sql = `SELECT * FROM Custody WHERE guardian_id = ?;`;
     const [rows, fields] = await promisePool.execute(sql, [citizen_id]);
     const results = new Set();
@@ -69,7 +69,7 @@ export async function getChildrenIds(citizen_id) {
  * @returns {bool} whether or not the citizen has dog permit
  */
 export async function hasDogPermit(citizen_id) {
-    const promisePool = pool.promise();
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
     const sql = `SELECT * FROM Permits WHERE permit_id = 2 AND citizen_id = ? AND date_of_issue < CURRENT_DATE() AND(valid_until IS NULL OR valid_until > CURRENT_DATE());`;
     const [rows, fields] = await promisePool.execute(sql, [citizen_id]);
     return rows.length > 0;
@@ -81,7 +81,7 @@ export async function hasDogPermit(citizen_id) {
  * @returns {int|null} the spouse id or null
  */
 export async function getSpouseId(citizen_id) {
-    const promisePool = pool.promise();
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
     const sql = `SELECT * FROM Marriage WHERE partner_1 = ? or partner_2 = ? LIMIT 1;`;
     const [rows, fields] = await promisePool.execute(sql, [citizen_id, citizen_id]);
     if (rows.length === 0) { return null }
@@ -96,7 +96,7 @@ export async function getSpouseId(citizen_id) {
  * @returns {array} all active permits
  */
 export async function getPermits(citizen_id) {
-    const promisePool = pool.promise();
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
     const sql = `SELECT * FROM Permits WHERE citizen_id = ? AND date_of_issue < CURRENT_DATE() AND(valid_until IS NULL OR valid_until > CURRENT_DATE());`;
     const [rows, fields] = await promisePool.execute(sql, [citizen_id]);
     return rows.length > 0 ? rows : [];

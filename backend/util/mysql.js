@@ -1,8 +1,17 @@
 import mysql from 'mysql2';
 
-//create connection pool
-const pool = mysql.createPool(process.env.DATABASE_URL);
+export default class MySQLWrapper {
 
-console.log(`\x1b[35m[MySQL]\x1b[0m connection pool created`);
+    static #connectionString = process.env.DATABASE_URL;
+    static pool = null;
 
-export default pool;
+    static createOrGetPool() {
+        if (MySQLWrapper.pool === null) {
+            MySQLWrapper.pool = mysql.createPool(MySQLWrapper.#connectionString);
+            console.log(`\x1b[35m[MySQL]\x1b[0m connection pool created`);
+        }
+        return MySQLWrapper.pool;
+    }
+
+}
+
