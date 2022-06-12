@@ -123,7 +123,7 @@ describe('Citizen API', () => {
     describe('POST /api/citizen', () => {
 
         test('/api/citizen [correct input]', async () => {
-            const data = { firstname: 'John', lastname: 'Doe', birthdate: '2000-01-01T00:00:00.000Z', gender: 'm', street: 'Musterweg', housenumber: '34b', city_code: 12345, city: 'Musterhausen' };
+            const data = { firstname: 'John', lastname: 'Doe', birthdate: '2000-01-01T00:00:00.000Z', gender: 'm', street: 'Musterweg', housenumber: '34b', city_code: 12345, city: 'Musterhausen', email: 'test@test.de' };
             createCitizen.mockResolvedValue(1);
             const response = await request(app).post('/api/citizen').send(data);
             //response is correct
@@ -148,7 +148,7 @@ describe('Citizen API', () => {
 
         test('/api/citizen [database error]', async () => {
             createCitizen.mockRejectedValue(new Error('database error'));
-            const data = { firstname: 'John', lastname: 'Doe', birthdate: '2000-01-01T00:00:00.000Z', gender: 'm', street: 'Musterweg', housenumber: '34b', city_code: 12345, city: 'Musterhausen' };
+            const data = { firstname: 'John', lastname: 'Doe', birthdate: '2000-01-01T00:00:00.000Z', gender: 'm', street: 'Musterweg', housenumber: '34b', city_code: 12345, city: 'Musterhausen', email: 'test@test.de' };
             const response = await request(app).post('/api/citizen').send(data);
             //response is correct
             expect(response.statusCode).toBe(500);

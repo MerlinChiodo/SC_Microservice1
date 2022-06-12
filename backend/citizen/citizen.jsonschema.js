@@ -15,7 +15,7 @@ const NewCitizenSchema = {
         city_code: { type: "integer", minimum: 1, maximum: 99999 },
         city: { type: "string", minLength: 1, maxLength: 100 }
     },
-    required: ["firstname", "lastname", "birthdate", "gender", "street", "housenumber", "city_code", "city"]
+    required: ["firstname", "lastname", "birthdate", "email"]
 };
 
 const CitizenIDSchema = {

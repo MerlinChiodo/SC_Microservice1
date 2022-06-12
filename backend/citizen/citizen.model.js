@@ -18,15 +18,15 @@ export async function createCitizen(citizen) {
     const values = [
         citizen.firstname,
         citizen.lastname,
-        citizen.gender,
+        citizen.gender || null,
         citizen.birthname || null,
         citizen.place_of_birth || null,
         citizen.birthdate,
-        citizen.email || null,
-        citizen.street,
-        citizen.housenumber,
-        citizen.city_code,
-        citizen.city
+        citizen.email,
+        citizen.street || null,
+        citizen.housenumber || null,
+        citizen.city_code || null,
+        citizen.city || null
     ];
     const [results, fields] = await promisePool.execute(sql, values);
     if (results.affectedRows === 0) {

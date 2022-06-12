@@ -16,7 +16,7 @@ DELETE FROM `Citizen`; ALTER TABLE `Citizen` AUTO_INCREMENT = 1; /*Truncate not 
 insert into Citizen (firstname, lastname, gender, birthname, place_of_birth, birthdate, email, street, housenumber, city_code, city)
 values ("Max", "Mustermann", "m", null, "Musterhausen", "1970-02-25", "max@mustermann.de", "Musterweg", "23a", 12345, "Musterstadt"),
 ("Miriam", "Mustermann", "w", "Musterfrau", "München", "1971-04-12", "miriam@mustermann.de", "Musterweg", "23a", 12345, "Musterstadt"),
-("Linda", "Mustermann", "w", null, "Berlin", "2010-08-12", null, "Musterweg", "23a", 12345, "Musterstadt"),
+("Linda", "Mustermann", "w", null, "Berlin", "2010-08-12", "linda@mustermann.de", "Musterweg", "23a", 12345, "Musterstadt"),
 ("Hans", "Müller", "m", null, "Paderborn", "1984-12-23", "hans.müller@gmx.de", "Beispielweg", "5", 12345, "Musterstadt"),
 ("Peter", "Meier", "m", null, "Bielefeld", "1965-08-22", "peter.meier@gmx.de", "Musterstraße", "7", 12345, "Musterstadt"),
 ("Paul", "Meyer", "m", null, "Madrid", "1955-01-29", "paul.meyer@gmx.de", "Beispielweg", "23", 12345, "Musterstadt"),

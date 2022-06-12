@@ -10,17 +10,17 @@
 create table Citizen
 (
    citizen_id           int unsigned not null auto_increment  comment '',
-   firstname            varchar(100) not null  comment '',
-   lastname             varchar(100) not null  comment '',
-   gender               varchar(1) not null  comment '',
-   birthname            varchar(100)  comment '',
-   place_of_birth       varchar(100)  comment '',
-   birthdate            date not null  comment '',
-   email                varchar(100)  comment '',
-   street               varchar(100) not null  comment '',
-   housenumber          varchar(5) not null  comment '',
-   city_code            int not null  comment '',
-   city                 varchar(100) not null  comment '',
+   firstname            varchar(100) not null                 comment '',
+   lastname             varchar(100) not null                 comment '',
+   gender               varchar(1)                            comment '',
+   birthname            varchar(100)                          comment '',
+   place_of_birth       varchar(100)                          comment '',
+   birthdate            date         not null                 comment '',
+   email                varchar(100) not null                 comment '',
+   street               varchar(100)                          comment '',
+   housenumber          varchar(5)                            comment '',
+   city_code            int                                   comment '',
+   city                 varchar(100)                          comment '',
    primary key (citizen_id)
 );
 
