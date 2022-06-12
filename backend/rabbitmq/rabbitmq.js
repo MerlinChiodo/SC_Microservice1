@@ -56,7 +56,7 @@ export default class RabbitMQWrapper {
 
     static async handleEvent(message) {
         try {
-            this.log(` recieved event: ${message.replace(/(?:\r\n|\r|\n|\s+)/g, ' ')}`);
+            this.log(`recieved data: ${message.replace(/(?:\r\n|\r|\n|\s+)/g, ' ')}`);
             const event = JSON.parse(message);
 
             //validate event
@@ -86,12 +86,12 @@ export default class RabbitMQWrapper {
         }
     }
 
-    static log(message) {
-        console.log(`\x1b[36m[RabbitMQ]\x1b[0m ${message}\x1b[0m`);
+    static log(message, ...args) {
+        console.log(`\x1b[36m[RabbitMQ]\x1b[0m ${message}\x1b[0m`, ...args);
     }
 
-    static error(message) {
-        console.error(`\x1b[36m[RabbitMQ]\x1b[0m ${message}\x1b[0m`);
+    static error(message, ...args) {
+        console.error(`\x1b[36m[RabbitMQ]\x1b[0m ${message}\x1b[0m`, ...args);
     }
 
 }

@@ -23,7 +23,6 @@ const Refugee = {
     required: ["firstname", "lastname", "date of birth", "email"]
 };
 
-
 const NewRefugeeEvent = {
     id: "/NewRefugeeEvent",
     type: "object",
