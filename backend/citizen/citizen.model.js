@@ -101,3 +101,18 @@ export async function getPermits(citizen_id) {
     const [rows, fields] = await promisePool.execute(sql, [citizen_id]);
     return rows.length > 0 ? rows : [];
 }
+
+/**
+ * save a new relationship custody between two citizens
+ * @param {string|int} guardian_id id of the guardian
+ * @param {string|int} child_id id of the child
+ */
+export async function saveCustody(guardian_id, child_id) {
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `INSERT INTO Custody(guardian_id, child_id) VALUES (?, ?);`;
+    const values = [guardian_id, child_id];
+    const [results, fields] = await promisePool.execute(sql, values);
+    if (results.affectedRows === 0) {
+        throw new Error('Could not create custody');
+    }
+}

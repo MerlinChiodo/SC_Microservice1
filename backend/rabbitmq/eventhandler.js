@@ -1,6 +1,6 @@
 import { Validator } from "jsonschema";
 import { Refugee, NewRefugeeEvent, NewRefugeeFamilyEvent } from "./events.jsonschema.js";
-import { createCitizen } from "../citizen/citizen.model.js";
+import { createCitizen, saveCustody } from "../citizen/citizen.model.js";
 // import { createCitizen } from "./events.model.js";
 import RabbitMQWrapper from "./rabbitmq.js";
 import CitizenCreatedEvent from "./events/CitizenCreatedEvent.js";
@@ -52,6 +52,52 @@ export async function handleRefugeeFamilyEvent(event) {
     if (result.errors.length > 0) {
         RabbitMQWrapper.error(`Error while validating event \x1b[31;2m${event.event_name}\x1b[0m: ${result.errors}`);
         return;
+    }
+
+    //try saving parents
+    let parent_ids = [];
+    try {
+        for (let index = 0; index < event.parents.length; index++) {
+            const parent = event.parents[index];
+            const citizen = {
+                firstname: parent.firstname, lastname: parent.lastname, birthdate: parent["date of birth"], email: parent.email
+            }
+            const parent_id = await createCitizen(citizen);
+            parent_ids.push(parent_id);
+            RabbitMQWrapper.publish(new CitizenCreatedEvent(parent_id));
+            
+        }
+    } catch (error) {
+        return RabbitMQWrapper.error(`Error while saving parents: ${error}`);
+    }
+
+    //try saving children
+    let child_ids = [];
+    try {
+        for (let index = 0; index < event.children.length; index++) {
+            const child = event.children[index];
+            const citizen = {
+                firstname: child.firstname, lastname: child.lastname, birthdate: child["date of birth"], email: child.email
+            }
+            const child_id = await createCitizen(citizen);
+            child_ids.push(child_id);
+            RabbitMQWrapper.publish(new CitizenCreatedEvent(child_id));
+        }
+    } catch (error) {
+        return RabbitMQWrapper.error(`Error while saving children: ${error}`);
+    }
+
+    //try saving relationship
+    try {
+        for (let i = 0; i < parent_ids.length; i++) {
+            const parent_id = parent_ids[i];
+            for (let j = 0; j < child_ids.length; j++) {
+                const child_id = child_ids[j];
+                await saveCustody(parent_id, child_id);
+            }
+        }
+    } catch (error) {
+        return RabbitMQWrapper.error(`Error while saving relationship: ${error}`);
     }
 
     //success
