@@ -101,5 +101,6 @@ export async function handleRefugeeFamilyEvent(event) {
     }
 
     //success
+    RabbitMQWrapper.log(`saved ${child_ids.length} children and ${parent_ids.length} parents`);
     RabbitMQWrapper.log(`event successful: \x1b[32;2m${event.event_name}`);
 }
