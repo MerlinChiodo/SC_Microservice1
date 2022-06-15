@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { useForm } from '@mantine/form';
 import { Modal, Grid, Button, Textarea, Select, createStyles, Text, useMantineTheme } from "@mantine/core";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 import { Check, ExclamationMark } from "tabler-icons-react";
+import { SmartAuth } from "../util/SmartAuth";
 
 const useStyles = createStyles((theme) => ({
     wrapper: { position: 'relative', marginBottom: 40, },
@@ -34,6 +35,9 @@ export const NewLicenseModal = (props) => {
     const handleSubmit = (values) => {
         form.clearErrors();
         form.validate();
+        let citizen_id = SmartAuth.getMyCitizenID();
+        if (citizen_id == null) { return; }
+        values.citizen_id = citizen_id;
         showNotification({ id: 'request-license', title: 'Bitte warten', message: 'Deine Anfrage wird bearbeitet', loading: true });
         console.log(values);
         fetch('/api/permits/requestPermit', {
@@ -61,10 +65,6 @@ export const NewLicenseModal = (props) => {
             updateNotification({ id: 'request-license', title: 'Fehler', message: 'Es ist ein unbekannter Fehler aufgetreten', icon: <ExclamationMark />, loading: false, color: 'red' });
         });
     };
-
-    useEffect(() => {
-        form.setFieldValue('citizen_id', 1);
-    });
 
     return (
         <Modal opened={props.opened} onClose={() => props.setOpen(false)} title="Neue Genehmigung beantragen" size="lg">
