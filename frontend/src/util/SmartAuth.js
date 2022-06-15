@@ -3,7 +3,7 @@ import { Login } from "../pages/Login";
 
 export function RequireAuth({ children }) {
     let location = useLocation();
-    let isAuthenticated = true;
+    let isAuthenticated = false;
     return isAuthenticated ? children : <Login redirect={location.pathname} />;
 }
 

@@ -10,6 +10,7 @@ import { AboutUs } from "./pages/admin/AboutUs";
 import { Admin } from "./pages/Admin";
 import { AdminLicenses } from "./pages/admin/Licenses";
 import { RequireAuth } from "./util/SmartAuth";
+import { Error } from "./pages/Error";
 
 export default function App() {
   const theme = useMantineTheme();
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/admin/aboutus" element={<AboutUs />} />
           <Route path="/admin/genehmigungen" element={<AdminLicenses />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/error" element={<Error />} />
         </Routes>
       </div>
     </Router>

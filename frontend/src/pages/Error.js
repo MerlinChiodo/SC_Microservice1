@@ -3,22 +3,20 @@ import { PageContainer } from "../components/PageContainer";
 import { Text, Button } from "@mantine/core";
 import { ExternalLink } from 'tabler-icons-react';
 
-export const Login = (props) => {
+export const Error = () => {
 
     useEffect(() => {
-        document.title = "Bürgerbüro - Login";
+        document.title = "Bürgerbüro - Fehler";
     });
 
     const host = window.location.origin;
-    const success = `${host}${props.redirect}`;
-    const error = `${host}/error`;
-    const url = `http://auth.smartcityproject.net:8080/external?redirect_success=${success}&redirect_error=${error}`;
+    const url = `http://auth.smartcityproject.net:8080/external?redirect_success=${host}&redirect_error=${host}/error`;
 
     return (
         <PageContainer>
-            <Text size="xl" weight={700} align="center">Du musst angemeldet sein um diese Seite aufzurufen</Text>
+            <Text size="xl" weight={700} align="center">Es gab einen Fehler bei der Anmeldung</Text>
             <Button component="a" href={url} leftIcon={<ExternalLink size={14} />} fullWidth mt={15} variant="outline">
-                Jetzt anmelden
+                Erneut versuchen
             </Button>
         </PageContainer>
     );
