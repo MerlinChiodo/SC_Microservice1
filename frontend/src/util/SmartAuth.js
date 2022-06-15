@@ -59,7 +59,8 @@ export class SmartAuth {
     }
 
     static logout() {
-        Cookies.remove('user_session_token');
+        Cookies.remove('user_session_token', { path: '/', domain: 'localhost' });
+        Cookies.remove('user_session_token', { path: '/', domain: 'smartcityproject.net' });
         SmartAuth.citizen = null;
     }
 
