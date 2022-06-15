@@ -10,7 +10,7 @@ import { AboutUs } from "./pages/admin/AboutUs";
 import { Admin } from "./pages/Admin";
 import { AdminLicenses } from "./pages/admin/Licenses";
 
-function App() {
+export default function App() {
   const theme = useMantineTheme();
   return (
     <Router>
@@ -29,5 +29,3 @@ function App() {
     </Router>
   );
 }
-
-export default App;

@@ -3,7 +3,7 @@ import { Table, ScrollArea, createStyles, Badge, Button, Grid } from '@mantine/c
 import { PageContainer } from "../components/PageContainer";
 import { NewLicenseModal } from "../components/NewLicenseModal";
 import { Plus, Refresh } from "tabler-icons-react";
-import { getMyCitizenID } from "../util/Util";
+import { getMyCitizenID } from "../util/SmartAuth";
 
 const useStyles = createStyles((theme) => ({
   header: {
