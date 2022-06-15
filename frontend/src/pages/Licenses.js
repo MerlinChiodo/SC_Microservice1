@@ -69,7 +69,7 @@ export const Licenses = () => {
 
   useEffect(() => {
     document.title = "Bürgerbüro - Genehmigungen";
-    fetchData();
+    setTimeout(fetchData, 500);
   }, []);
 
   return (

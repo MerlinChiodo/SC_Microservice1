@@ -22,6 +22,10 @@ export class SmartAuth {
     }
 
     static isLoggedIn() {
+        if (this.#citizen !== null) {
+            return true;
+        }
+
         //check if cookie user_session_token is set
         const tokenCookie = Cookies.get('user_session_token');
         if (tokenCookie !== undefined) {
@@ -52,6 +56,11 @@ export class SmartAuth {
             return this.#citizen.citizen_id;
         }
         return null;
+    }
+
+    static logout() {
+        Cookies.remove('user_session_token');
+        SmartAuth.citizen = null;
     }
 
 }
