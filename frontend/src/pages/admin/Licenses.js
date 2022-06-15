@@ -4,7 +4,6 @@ import { PageContainer } from "../../components/PageContainer";
 import { Grid, Button, ScrollArea, Table } from "@mantine/core";
 import { Refresh } from "tabler-icons-react";
 import { useModals } from '@mantine/modals';
-import { useForm } from '@mantine/form';
 
 
 const useStyles = createStyles((theme) => ({
@@ -27,16 +26,17 @@ export const AdminLicenses = () => {
   const [scrolled, setScrolled] = useState(false);
   const [permits, setPermits] = useState([]);
   const modals = useModals();
-  const form = useForm({ initialValues: { valid_until: null } });
 
-  const handleAccept = (values, id) => {
-    console.log(values);
+  const handleAccept = (event, id) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const formProps = Object.fromEntries(formData);
+    console.log(formProps);
     modals.closeModal(id);
   };
 
   const handleDecline = (id) => {
     modals.closeModal(id);
-    form.reset();
   }
 
   const detailsModal = (permit) => modals.openContextModal('acceptLicense', {
@@ -44,7 +44,7 @@ export const AdminLicenses = () => {
     innerProps: {
       handleDecline: handleDecline,
       handleAccept: handleAccept,
-      form: form, permit: permit,
+      permit: permit,
     }
   });
 

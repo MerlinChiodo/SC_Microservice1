@@ -3,7 +3,7 @@ import { DatePicker } from '@mantine/dates';
 import { Calendar } from "tabler-icons-react";
 
 export const AcceptLicenseModal = ({ context, id, innerProps }) => (
-    <form onSubmit={innerProps.form.onSubmit((v) => innerProps.handleAccept(v, id))}>
+    <form onSubmit={(event) => innerProps.handleAccept(event, id)}>
         <Grid grow gutter="xl" align="center">
             <Grid.Col span={12}>
                 <Text size="lg" weight={800}>Bürger</Text>
@@ -23,10 +23,10 @@ export const AcceptLicenseModal = ({ context, id, innerProps }) => (
             </Grid.Col>
             <Grid.Col span={12}>
                 <Text size="lg" weight={800}>Gültig bis</Text>
-                <DatePicker icon={<Calendar size={16} />} placeholder="optional" {...innerProps.form.getInputProps('valid_until')} />
+                <DatePicker icon={<Calendar size={16} />} placeholder="optional" label="" name="valid_until" />
             </Grid.Col>
             <Grid.Col span={6}>
-                <Button fullWidth color="red" onClick={innerProps.handleDecline}>Ablehnen</Button>
+                <Button fullWidth color="red" onClick={() => innerProps.handleDecline(id)}>Ablehnen</Button>
             </Grid.Col>
             <Grid.Col span={6}>
                 <Button fullWidth color="green" type="submit">Annehmen</Button>
