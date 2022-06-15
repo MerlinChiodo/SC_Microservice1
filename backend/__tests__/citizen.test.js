@@ -252,7 +252,7 @@ describe('Citizen API', () => {
         });
 
         test('/api/citizen/1/permits [check correct response]', async () => {
-            const data = [1, 2, 3];
+            const data = [{ permits_id: 1, citizen_id: 1, processed: 0, valid_until: null, date_of_isse: null }, { permits_id: 2, citizen_id: 1, processed: 0, valid_until: null, date_of_isse: null }];
             getPermits.mockResolvedValue(data);
             const response = await request(app).get('/api/citizen/1/permits');
             //response is correct

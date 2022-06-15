@@ -227,8 +227,8 @@ function getPermitStatus(date_of_issue, valid_until, processed) {
         let date_of_issue_date = new Date(date_of_issue);
         let valid_until_date = new Date(valid_until);
         let today = new Date();
-        if (today < date_of_issue_date) {
-            return "offen";
+        if (today > date_of_issue_date && today < valid_until_date) {
+            return "gültig";
         }
         if (today > valid_until_date) {
             return "abgelaufen";

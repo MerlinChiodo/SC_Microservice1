@@ -70,13 +70,25 @@ export async function getAllOpenPermitRequests() {
 };
 
 export async function approvePermitRequest(permits_id, valid_until) {
-    //TODO update in database
     //mark permit request as approved 
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `UPDATE Permits SET date_of_issue = NOW(), valid_until = ?, processed = 1 WHERE permits_id = ?;`;
+    const values = [valid_until, permits_id];
+    const [results, fields] = await promisePool.execute(sql, values);
+    if (results.affectedRows === 0) {
+        return false;
+    }
     return true;
 };
 
 export async function rejectPermitRequest(permits_id,) {
-    //TODO update in database
     //mark permit request as rejected
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `UPDATE Permits SET processed = 1 WHERE permits_id = ?;`;
+    const values = [permits_id];
+    const [results, fields] = await promisePool.execute(sql, values);
+    if (results.affectedRows === 0) {
+        return false;
+    }
     return true;
 };
