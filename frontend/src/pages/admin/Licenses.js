@@ -3,7 +3,8 @@ import { createStyles } from "@mantine/core";
 import { PageContainer } from "../../components/PageContainer";
 import { Grid, Button, ScrollArea, Table } from "@mantine/core";
 import { Refresh } from "tabler-icons-react";
-import { ApproveModal } from "../../components/ApproveModal";
+import { useModals } from '@mantine/modals';
+import { useForm } from '@mantine/form';
 
 
 const useStyles = createStyles((theme) => ({
@@ -25,7 +26,27 @@ export const AdminLicenses = () => {
   const { classes, cx } = useStyles();
   const [scrolled, setScrolled] = useState(false);
   const [permits, setPermits] = useState([]);
-  const [opened, setOpened] = useState(false);
+  const modals = useModals();
+  const form = useForm({ initialValues: { valid_until: null } });
+
+  const handleAccept = (values, id) => {
+    console.log(values);
+    modals.closeModal(id);
+  };
+
+  const handleDecline = (id) => {
+    modals.closeModal(id);
+    form.reset();
+  }
+
+  const detailsModal = (permit) => modals.openContextModal('acceptLicense', {
+    title: 'Genehmigungsdetails', size: 'lg',
+    innerProps: {
+      handleDecline: handleDecline,
+      handleAccept: handleAccept,
+      form: form, permit: permit,
+    }
+  });
 
   const fetchData = () => {
     fetch('/api/permits/open')
@@ -43,37 +64,34 @@ export const AdminLicenses = () => {
   }, []);
 
   return (
-    <>
-      <ApproveModal opened={opened} setOpen={setOpened} refresh={fetchData} />
-      <PageContainer title="Offene Genehmigungen" size={1200}>
-        <Grid gutter="lg">
-          <Grid.Col>
-            <Button fullWidth color="green" leftIcon={<Refresh size={18} />} onClick={fetchData}>Aktualisieren</Button>
-          </Grid.Col>
-        </Grid>
-        <ScrollArea sx={{ height: 300 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)} mt={20}>
-          <Table sx={{ minWidth: 700 }} highlightOnHover>
-            <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
+    <PageContainer title="Offene Genehmigungen" size={1200}>
+      <Grid gutter="lg">
+        <Grid.Col>
+          <Button fullWidth color="green" leftIcon={<Refresh size={18} />} onClick={fetchData}>Aktualisieren</Button>
+        </Grid.Col>
+      </Grid>
+      <ScrollArea sx={{ height: 300 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)} mt={20}>
+        <Table sx={{ minWidth: 700 }} highlightOnHover>
+          <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
+            <tr>
+              <th>Bürger</th>
+              <th>Genehmigungsart</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {permits.map(permit => (
               <tr>
-                <th>Bürger</th>
-                <th>Genehmigungsart</th>
-                <th></th>
+                <td>{permit.lastname}, {permit.firstname}</td>
+                <td>{permit.title}</td>
+                <td style={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Button variant="outline" size="xs" onClick={() => detailsModal(permit)}>Details</Button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {permits.map(permit => (
-                <tr>
-                  <td>{permit.lastname}, {permit.firstname}</td>
-                  <td>{permit.title}</td>
-                  <td style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button variant="outline" size="xs" onClick={() => { setOpened(true) }}>Details</Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </ScrollArea>
-      </PageContainer>
-    </>
+            ))}
+          </tbody>
+        </Table>
+      </ScrollArea>
+    </PageContainer>
   );
 };

@@ -3,6 +3,8 @@ import App from './App';
 import { createRoot } from 'react-dom/client';
 import { MantineProvider } from '@mantine/core';
 import { NotificationsProvider } from '@mantine/notifications';
+import { ModalsProvider } from '@mantine/modals';
+import { AcceptLicenseModal } from './components/AcceptLicenseModal';
 
 const customTheme = {
     colorScheme: 'dark',
@@ -13,8 +15,10 @@ const container = document.getElementById('root');
 const root = createRoot(container);
 root.render(
     <MantineProvider theme={customTheme} withGlobalStyles withNormalizeCSS>
-        <NotificationsProvider>
-            <App />
-        </NotificationsProvider>
+        <ModalsProvider modals={{ acceptLicense: AcceptLicenseModal }}>
+            <NotificationsProvider>
+                <App />
+            </NotificationsProvider>
+        </ModalsProvider>
     </MantineProvider>
 );
