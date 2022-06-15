@@ -37,9 +37,9 @@ insert into Permit (title, description)
 values ("Baugenehmigung", "Genehmigung für Bauarbeiten am Grundstück des Bürgers"),
 ("Sachkundenachweis für Hundehalter", "Diese Erlaubnis befähigt den Bürger größere/gefährliche Hunde zu halten.");
 
-insert into Permits (permit_id, citizen_id, date_of_issue, valid_until, status)
-values (1, 1, "2009-11-25", "2010-11-25", "offen"),
-(2, 1, "2014-01-12", null, "offen");
+insert into Permits (permit_id, citizen_id, date_of_issue, valid_until)
+values (1, 1, "2009-11-25", "2010-11-25"),
+(2, 1, "2014-01-12", null);
 
 insert into Marriage (partner_1, partner_2)
 values (1, 2),(11, 12),(14, 15);

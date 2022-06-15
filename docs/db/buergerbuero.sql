@@ -81,7 +81,6 @@ create table Permits
    date_of_issue        date  comment '',
    valid_until          date  comment '',
    description          text  comment '',
-   status               varchar(15) not null  comment '',
    primary key (permits_id)
 );
 
