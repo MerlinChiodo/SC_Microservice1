@@ -1,4 +1,4 @@
-import pool from '../util/mysql.js';
+import MySQLWrapper from "../util/mysql.js";
 
 /* -------------------------------------------------------------------------- */
 /*                              permits.model.js                              */
@@ -32,7 +32,7 @@ export async function deletePermit(permit_id) {
 
 export async function getAllPermits() {
     //returns all permits
-    const promisePool = pool.promise();
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
     const sql = `SELECT * FROM Permit;`;
     const [rows, fields] = await promisePool.execute(sql);
     return rows;
@@ -40,7 +40,7 @@ export async function getAllPermits() {
 
 export async function createPermitRequest(permit_id, citizen_id, description) {
     //create a new permit request in the database
-    const promisePool = pool.promise();
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
     const sql = `INSERT INTO Permits (permit_id, citizen_id, description, status) VALUES (?, ?, ?, 'offen');`;
     const values = [permit_id, citizen_id, description];
     const [results, fields] = await promisePool.execute(sql, values);

@@ -263,7 +263,7 @@ describe('Permits API', () => {
     describe('POST /api/permits/requestPermit', () => {
 
         test('/api/permits/requestPermit [correct input]', async () => {
-            const data = { permit_id: 1, citizen_id: 1 };
+            const data = { permit_id: "1", citizen_id: 1 };
             createPermitRequest.mockReturnValue(true);
             const response = await request(app).post('/api/permits/requestPermit').send(data);
             //response is correct
@@ -274,7 +274,7 @@ describe('Permits API', () => {
         });
 
         test('/api/permits/requestPermit [wrong input]', async () => {
-            const data = { permit_id: 1 }; //missing citizen_id
+            const data = { permit_id: "1" }; //missing citizen_id
             createPermitRequest.mockReturnValue(false);
             const response = await request(app).post('/api/permits/requestPermit').send(data);
             //response is correct
@@ -286,7 +286,7 @@ describe('Permits API', () => {
         });
 
         test('/api/permits/requestPermit [database error]', async () => {
-            const data = { permit_id: 1, citizen_id: 1 };
+            const data = { permit_id: "1", citizen_id: 1 };
             createPermitRequest.mockRejectedValue(new Error('database error'));
             const response = await request(app).post('/api/permits/requestPermit').send(data);
             //response is correct
