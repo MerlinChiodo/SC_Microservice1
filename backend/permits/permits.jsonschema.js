@@ -40,7 +40,7 @@ const ApprovePermitSchema = {
     id: "/ApproveOrRejectPermitSchema",
     type: "object",
     properties: {
-        valid_until: { type: "string", format: "date" }
+        valid_until: { type: ["string", "null"], format: "date" }
     },
     required: []
 };

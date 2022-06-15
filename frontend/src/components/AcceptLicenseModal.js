@@ -23,10 +23,10 @@ export const AcceptLicenseModal = ({ context, id, innerProps }) => (
             </Grid.Col>
             <Grid.Col span={12}>
                 <Text size="lg" weight={800}>Gültig bis</Text>
-                <DatePicker icon={<Calendar size={16} />} placeholder="optional" label="" name="valid_until" />
+                <DatePicker icon={<Calendar size={16} />} placeholder="optional" label="" name="valid_until" inputFormat="YYYY-MM-DD" />
             </Grid.Col>
             <Grid.Col span={6}>
-                <Button fullWidth color="red" onClick={() => innerProps.handleDecline(id)}>Ablehnen</Button>
+                <Button fullWidth color="red" onClick={() => innerProps.handleDecline(id, innerProps.permit.permits_id)}>Ablehnen</Button>
             </Grid.Col>
             <Grid.Col span={6}>
                 <Button fullWidth color="green" type="submit">Annehmen</Button>

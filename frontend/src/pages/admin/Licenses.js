@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { createStyles } from "@mantine/core";
 import { PageContainer } from "../../components/PageContainer";
 import { Grid, Button, ScrollArea, Table } from "@mantine/core";
-import { Refresh } from "tabler-icons-react";
+import { showNotification, updateNotification } from '@mantine/notifications';
+import { Refresh, Check, ExclamationMark } from "tabler-icons-react";
 import { useModals } from '@mantine/modals';
 
 
@@ -30,12 +31,48 @@ export const AdminLicenses = () => {
   const handleAccept = (event, modalID, permits_id) => {
     event.preventDefault();
     const formData = new FormData(event.target);
-    const formProps = Object.fromEntries(formData);
+    let valid_until = Object.fromEntries(formData).valid_until || null;
+    if (valid_until !== null) {
+      valid_until = new Date(valid_until + "T12:00:00.000Z").toISOString().split('T')[0];
+    }
     modals.closeModal(modalID);
+    showNotification({ id: 'accept', title: 'Bitte warten', message: 'Deine Anfrage wird bearbeitet', loading: true });
+    fetch(`/api/permits/approve/${permits_id}`, {
+      method: 'POST',
+      body: JSON.stringify({ valid_until: valid_until }),
+      headers: { 'Content-Type': 'application/json' }
+    }).then(response => response.json())
+      .then(data => {
+        if (data.errors) { throw data.errors; }
+        if (data.success) {
+          updateNotification({ id: 'accept', title: 'Erfolgreich', message: 'Du hast die Genehmigung angenommen', icon: <Check />, loading: false });
+          fetchData();
+        }
+      })
+      .catch(error => {
+        updateNotification({ id: 'accept', title: 'Fehler', message: 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut', icon: <ExclamationMark />, loading: false, color: 'red' });
+        console.error(error)
+      });
   };
 
-  const handleDecline = (id) => {
-    modals.closeModal(id);
+  const handleDecline = (modalID, permits_id) => {
+    modals.closeModal(modalID);
+    showNotification({ id: 'reject', title: 'Bitte warten', message: 'Deine Anfrage wird bearbeitet', loading: true });
+    fetch(`/api/permits/reject/${permits_id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    }).then(response => response.json())
+      .then(data => {
+        if (data.errors) { throw data.errors; }
+        if (data.success) {
+          updateNotification({ id: 'reject', title: 'Erfolgreich', message: 'Du hast die Genehmigung abgelehnt', icon: <Check />, loading: false });
+          fetchData();
+        }
+      })
+      .catch(error => {
+        updateNotification({ id: 'reject', title: 'Fehler', message: 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut', icon: <ExclamationMark />, loading: false, color: 'red' });
+        console.error(error)
+      });
   }
 
   const detailsModal = (permit) => modals.openContextModal('acceptLicense', {
@@ -72,11 +109,7 @@ export const AdminLicenses = () => {
       <ScrollArea sx={{ height: 300 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)} mt={20}>
         <Table sx={{ minWidth: 700 }} highlightOnHover>
           <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
-            <tr>
-              <th>Bürger</th>
-              <th>Genehmigungsart</th>
-              <th></th>
-            </tr>
+            <tr><th>Bürger</th><th>Genehmigungsart</th><th></th></tr>
           </thead>
           <tbody>
             {permits.map(permit => (
