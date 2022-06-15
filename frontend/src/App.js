@@ -9,6 +9,7 @@ import { useMantineTheme } from '@mantine/core';
 import { AboutUs } from "./pages/admin/AboutUs";
 import { Admin } from "./pages/Admin";
 import { AdminLicenses } from "./pages/admin/Licenses";
+import { RequireAuth } from "./util/SmartAuth";
 
 export default function App() {
   const theme = useMantineTheme();
@@ -19,8 +20,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/melden" element={<Register />} />
-          <Route path="/antraege" element={<Requests />} />
-          <Route path="/genehmigungen" element={<Licenses />} />
+          <Route path="/antraege" element={<RequireAuth ><Requests /></RequireAuth>} />
+          <Route path="/genehmigungen" element={<RequireAuth  ><Licenses /></RequireAuth>} />
           <Route path="/admin/aboutus" element={<AboutUs />} />
           <Route path="/admin/genehmigungen" element={<AdminLicenses />} />
           <Route path="/admin" element={<Admin />} />
