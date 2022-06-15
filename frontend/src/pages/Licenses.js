@@ -3,7 +3,7 @@ import { Table, ScrollArea, createStyles, Badge, Button, Grid } from '@mantine/c
 import { PageContainer } from "../components/PageContainer";
 import { NewLicenseModal } from "../components/NewLicenseModal";
 import { Plus, Refresh } from "tabler-icons-react";
-import { getMyCitizenID } from "../util/SmartAuth";
+import { SmartAuth } from "../util/SmartAuth";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -35,15 +35,20 @@ export const Licenses = () => {
   const [permits, setPermits] = useState([]);
 
   const fetchData = () => {
-    let citizenID = getMyCitizenID();
+    let citizenID = SmartAuth.getMyCitizenID();
+    if (citizenID == null) { return; }
     fetch(`/api/citizen/${citizenID}/permits`)
       .then(response => response.json())
-      .then(data => setUserPermits(data.permits))
+      .then(data => {
+        if (data.errors) { console.error(data.errors); return; }
+        setUserPermits(data.permits)
+      })
       .catch(error => console.error(error));
 
     fetch('/api/permits')
       .then(response => response.json())
       .then((data) => {
+        if (data.errors) { console.error(data.errors); return; }
         const permits = [{ value: '', label: 'Bitte auswählen' }];
         data.permits.forEach((permit) => { permits.push({ value: '' + permit.permit_id, label: '' + permit.title }); });
         setPermits(permits)
