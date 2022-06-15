@@ -84,7 +84,7 @@ export const Licenses = () => {
             <Button fullWidth color="green" leftIcon={<Refresh size={18} />} onClick={fetchData}>Aktualisieren</Button>
           </Grid.Col>
         </Grid>
-        <ScrollArea sx={{ height: 300 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+        <ScrollArea sx={{ height: 300 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)} mt={20}>
           <Table sx={{ minWidth: 700 }} highlightOnHover>
             <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
               <tr>

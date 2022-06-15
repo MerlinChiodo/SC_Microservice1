@@ -41,7 +41,7 @@ export async function getAllPermits() {
 export async function createPermitRequest(permit_id, citizen_id, description) {
     //create a new permit request in the database
     const promisePool = MySQLWrapper.createOrGetPool().promise();
-    const sql = `INSERT INTO Permits (permit_id, citizen_id, description) VALUES (?, ?, ?);`;
+    const sql = `INSERT INTO Permits (permit_id, citizen_id, description, status) VALUES (?, ?, ?, 'offen');`;
     const values = [permit_id, citizen_id, description];
     const [results, fields] = await promisePool.execute(sql, values);
     if (results.affectedRows === 0) {
@@ -51,9 +51,22 @@ export async function createPermitRequest(permit_id, citizen_id, description) {
 };
 
 export async function getAllOpenPermitRequests() {
-    //TODO get from database
     //returns all open permit requests
-    return [{ citizen_id: 1, permit_id: 1, status: 'offen' }, { citizen_id: 2, permit_id: 2, status: 'offen' }];
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `SELECT
+                        Permits.permits_id,
+                        Citizen.firstname,
+                        Citizen.lastname,
+                        Permit.title,
+                        Permits.description as reason,
+                        Permit.description
+                    FROM Permits
+                    JOIN Permit ON Permit.permit_id = Permits.permit_id
+                    JOIN Citizen ON Citizen.citizen_id = Permits.citizen_id
+                    WHERE Permits.status = "offen"
+                    ORDER BY Permits.permits_id DESC;`;
+    const [rows, fields] = await promisePool.execute(sql);
+    return rows.length > 0 ? rows : [];
 };
 
 export async function approvePermitRequest(permits_id, valid_until) {
