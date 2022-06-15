@@ -1,5 +1,6 @@
 import request from 'supertest';
 import RabbitMQWrapper from '../rabbitmq/rabbitmq.js';
+import MySQLWrapper from '../util/mysql.js';
 import { jest } from '@jest/globals'
 import citizenRouter from '../citizen/citizen.router.js';
 import express from 'express';
@@ -31,6 +32,8 @@ describe('Citizen API', () => {
         jest.spyOn(console, 'error').mockImplementation(() => { });
         //mock rabbitmq that the events are not sent while testing
         jest.spyOn(RabbitMQWrapper, 'publish').mockImplementation(() => { });
+        //mock mysql connection pool creation
+        jest.spyOn(MySQLWrapper, 'createOrGetPool').mockImplementation(() => { });
         //mock smartauth while testing, to not call the microservice
         jest.spyOn(SmartAuth, 'getPermissions').mockImplementation(() => { return true; });
     });
@@ -47,12 +50,14 @@ describe('Citizen API', () => {
     afterEach(() => {
         console.error.mockClear();
         RabbitMQWrapper.publish.mockClear();
+        MySQLWrapper.createOrGetPool.mockClear();
         SmartAuth.getPermissions.mockClear();
     });
 
     afterAll(() => {
         console.error.mockRestore();
         RabbitMQWrapper.publish.mockRestore();
+        MySQLWrapper.createOrGetPool.mockRestore();
         SmartAuth.getPermissions.mockRestore();
     });
 
@@ -123,7 +128,7 @@ describe('Citizen API', () => {
     describe('POST /api/citizen', () => {
 
         test('/api/citizen [correct input]', async () => {
-            const data = { firstname: 'John', lastname: 'Doe', birthdate: '2000-01-01T00:00:00.000Z', gender: 'm', street: 'Musterweg', housenumber: '34b', city_code: 12345, city: 'Musterhausen' };
+            const data = { firstname: 'John', lastname: 'Doe', birthdate: '2000-01-01T00:00:00.000Z', gender: 'm', street: 'Musterweg', housenumber: '34b', city_code: 12345, city: 'Musterhausen', email: 'test@test.de' };
             createCitizen.mockResolvedValue(1);
             const response = await request(app).post('/api/citizen').send(data);
             //response is correct
@@ -148,7 +153,7 @@ describe('Citizen API', () => {
 
         test('/api/citizen [database error]', async () => {
             createCitizen.mockRejectedValue(new Error('database error'));
-            const data = { firstname: 'John', lastname: 'Doe', birthdate: '2000-01-01T00:00:00.000Z', gender: 'm', street: 'Musterweg', housenumber: '34b', city_code: 12345, city: 'Musterhausen' };
+            const data = { firstname: 'John', lastname: 'Doe', birthdate: '2000-01-01T00:00:00.000Z', gender: 'm', street: 'Musterweg', housenumber: '34b', city_code: 12345, city: 'Musterhausen', email: 'test@test.de' };
             const response = await request(app).post('/api/citizen').send(data);
             //response is correct
             expect(response.statusCode).toBe(500);

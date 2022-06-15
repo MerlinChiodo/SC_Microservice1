@@ -1,0 +1,12 @@
+{
+    "event_id": 9000,
+    "event_name": "Register New Refugee",
+    "service_name": "integration",
+    "date": "2020-01-01T00:00:00",
+    "refugee": {
+        "firstname": "John",
+        "lastname": "Doe",
+        "date of birth": "2000-01-20",
+        "email": "john@doe.com"
+    }
+}

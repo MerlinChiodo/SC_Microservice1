@@ -1,0 +1,34 @@
+{
+    "event_id": 9001,
+    "event_name": "Register New Refugee Family",
+    "service_name": "integration",
+    "date": "2020-01-01T00:00:00",
+    "parents": [
+        {
+            "firstname": "John",
+            "lastname": "Doe",
+            "date of birth": "2020-01-01",
+            "email": "john@doe.com"
+        },
+        {
+            "firstname": "John",
+            "lastname": "Doe",
+            "date of birth": "2020-01-01",
+            "email": "john@doe.com"
+        }
+    ],
+    "children": [
+        {
+            "firstname": "John",
+            "lastname": "Doe",
+            "date of birth": "2020-01-01",
+            "email": "john@doe.com"
+        },
+        {
+            "firstname": "John",
+            "lastname": "Doe",
+            "date of birth": "2020-01-01",
+            "email": "john@doe.com"
+        }
+    ]
+}

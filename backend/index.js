@@ -10,6 +10,7 @@ import * as requestModel from './requests/requests.model.js';
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import RabbitMQWrapper from './rabbitmq/rabbitmq.js';
 
 // setup express app
 const app = express();
@@ -51,4 +52,5 @@ const port = process.env.PORT || 3000;
 // start server
 app.listen(port, () => {
     console.log(`Websever is ready at port ${port}`);
+    RabbitMQWrapper.startListener();
 })
