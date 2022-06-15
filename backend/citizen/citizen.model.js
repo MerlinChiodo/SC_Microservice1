@@ -102,6 +102,7 @@ export async function getPermits(citizen_id) {
                     Permits.permit_id,
                     Permits.date_of_issue,
                     Permits.valid_until,
+                    Permits.processed,
                     Permit.title,
                     Permit.description
                 FROM Permits

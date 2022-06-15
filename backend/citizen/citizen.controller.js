@@ -204,16 +204,21 @@ export async function getPermits(request, response) {
     for (let i = 0; i < permits.length; i++) {
         let date_of_issue = permits[i].date_of_issue;
         let valid_until = permits[i].valid_until;
-        permits[i].status = getPermitStatus(date_of_issue, valid_until);
+        let processed = permits[i].processed;
+        permits[i].status = getPermitStatus(date_of_issue, valid_until, processed);
     }
 
     // send response
     response.status(200).json({ citizen_id: parseInt(citizen_id), permits: permits });
 };
 
-function getPermitStatus(date_of_issue, valid_until) {
+function getPermitStatus(date_of_issue, valid_until, processed) {
     if (date_of_issue === null && valid_until === null) {
-        return "offen";
+        if (processed === 0) {
+            return 'offen';
+        } else {
+            return 'abgelehnt';
+        }
     }
     if (date_of_issue !== null && valid_until === null) {
         return "gültig";

@@ -61,6 +61,7 @@ export const Licenses = () => {
       case "gültig":
         return (<Badge color="green" size="lg">{status}</Badge>);
       case "abgelaufen":
+      case "abgelehnt":
         return (<Badge color="red" size="lg">{status}</Badge>);
       default:
         return (<Badge color="yellow" size="lg">{status}</Badge>);

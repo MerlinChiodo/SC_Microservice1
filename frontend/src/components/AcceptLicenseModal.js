@@ -3,7 +3,7 @@ import { DatePicker } from '@mantine/dates';
 import { Calendar } from "tabler-icons-react";
 
 export const AcceptLicenseModal = ({ context, id, innerProps }) => (
-    <form onSubmit={(event) => innerProps.handleAccept(event, id)}>
+    <form onSubmit={(event) => innerProps.handleAccept(event, id, innerProps.permit.permits_id)}>
         <Grid grow gutter="xl" align="center">
             <Grid.Col span={12}>
                 <Text size="lg" weight={800}>Bürger</Text>

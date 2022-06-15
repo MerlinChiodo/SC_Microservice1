@@ -27,12 +27,11 @@ export const AdminLicenses = () => {
   const [permits, setPermits] = useState([]);
   const modals = useModals();
 
-  const handleAccept = (event, id) => {
+  const handleAccept = (event, modalID, permits_id) => {
     event.preventDefault();
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
-    console.log(formProps);
-    modals.closeModal(id);
+    modals.closeModal(modalID);
   };
 
   const handleDecline = (id) => {
