@@ -3,7 +3,7 @@ import NavBar from "./components/NavBar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { Register } from "./pages/Register";
-import { Requests } from "./pages/Requests";
+import { Account } from "./pages/Account";
 import { Licenses } from "./pages/Licenses";
 import { useMantineTheme } from '@mantine/core';
 import { AboutUs } from "./pages/admin/AboutUs";
@@ -21,7 +21,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/melden" element={<Register />} />
-          <Route path="/antraege" element={<RequireAuth ><Requests /></RequireAuth>} />
+          <Route path="/account" element={<RequireAuth ><Account /></RequireAuth>} />
           <Route path="/genehmigungen" element={<RequireAuth  ><Licenses /></RequireAuth>} />
           <Route path="/admin/aboutus" element={<AboutUs />} />
           <Route path="/admin/genehmigungen" element={<AdminLicenses />} />

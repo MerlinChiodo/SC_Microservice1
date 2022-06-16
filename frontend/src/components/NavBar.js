@@ -20,19 +20,13 @@ function NavBar() {
 
         <ul className={click ? "nav-menu active" : "nav-menu"}>
           <li className="nav-item">
-            <NavLink to="/melden" activeclassname="active" className="nav-links" onClick={handleClick} >
-              Melden
-            </NavLink>
+            <NavLink to="/melden" activeclassname="active" className="nav-links" onClick={handleClick} >Melden</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink to="/antraege" activeclassname="active" className="nav-links" onClick={handleClick} >
-              Anträge
-            </NavLink>
+            <NavLink to="/account" activeclassname="active" className="nav-links" onClick={handleClick} >Meine Daten</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink to="/genehmigungen" activeclassname="active" className="nav-links" onClick={handleClick} >
-              Genehmigungen
-            </NavLink>
+            <NavLink to="/genehmigungen" activeclassname="active" className="nav-links" onClick={handleClick} >Genehmigungen</NavLink>
           </li>
           {SmartAuth.isLoggedIn() && (
             <li className="nav-item">
