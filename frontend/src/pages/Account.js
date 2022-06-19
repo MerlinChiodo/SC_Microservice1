@@ -1,8 +1,31 @@
 import React, { useEffect } from "react";
 import { PageContainer } from "../components/PageContainer";
 import { Grid, Text, Button } from "@mantine/core";
+import { useModals } from '@mantine/modals';
 
 export const Account = () => {
+
+  const modals = useModals();
+
+  const handleSubmitNameChange = (event, id) => {
+    event.preventDefault();
+    modals.closeModal(id);
+  };
+
+  const handleSubmitAddressChange = (event, id) => {
+    event.preventDefault();
+    modals.closeModal(id);
+  };
+
+  const nameChangeModal = () => modals.openContextModal('nameChange', {
+    title: 'Namensänderung', size: 'lg',
+    innerProps: { handleSubmit: handleSubmitNameChange }
+  });
+
+  const addressChangeModal = () => modals.openContextModal('addressChange', {
+    title: 'Adressänderung', size: 'lg',
+    innerProps: { handleSubmit: handleSubmitAddressChange }
+  });
 
   useEffect(() => {
     document.title = "Bürgerbüro - Meine Daten";
@@ -33,10 +56,10 @@ export const Account = () => {
           <Text>12345 Musterhausen</Text>
         </Grid.Col>
         <Grid.Col span={12} xs={6}>
-          <Button fullWidth color="teal">Namensänderung beantragen</Button>
+          <Button fullWidth color="green" onClick={nameChangeModal}>Namensänderung beantragen</Button>
         </Grid.Col>
         <Grid.Col span={12} xs={6}>
-          <Button fullWidth color="teal" >Umzug melden</Button>
+          <Button fullWidth color="green" onClick={addressChangeModal}>Umzug melden</Button>
         </Grid.Col>
       </Grid>
     </PageContainer>
