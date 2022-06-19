@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { PageContainer } from "../../components/PageContainer";
 import { Grid, Button, ScrollArea, Table, createStyles } from "@mantine/core";
 import { Refresh } from "tabler-icons-react";
+import { useModals } from "@mantine/modals";
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -18,6 +19,22 @@ export const AccountChanges = () => {
     const { classes, cx } = useStyles();
     const [scrolled, setScrolled] = useState(false);
     const [requests, setRequests] = useState([]);
+    const modals = useModals();
+
+    const handleAccept = (event, modal_id, request_id) => {
+        event.preventDefault();
+        modals.closeModal(modal_id);
+        console.log(request_id);
+    };
+    const handleDecline = (modal_id, request_id) => {
+        modals.closeModal(modal_id);
+        console.log(request_id);
+    };
+
+    const detailsModal = (request) => modals.openContextModal('acceptRequest', {
+        title: 'Antragsdetails', size: 'xl',
+        innerProps: { handleAccept: handleAccept, handleDecline: handleDecline, request: request }
+    });
 
     const fetchData = () => {
         fetch('/api/requests')
@@ -48,13 +65,14 @@ export const AccountChanges = () => {
                     </thead>
                     <tbody>
                         {requests.map(request => (
-                            <tr>
+                            <tr key={request.request_id}>
                                 <td>{request.citizen_old.lastname}, {request.citizen_old.firstname}</td>
                                 <td>{request.opened ? new Date(request.opened).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : "-"}</td>
                                 <td style={{ display: "flex", justifyContent: "flex-end" }}>
-                                    <Button variant="outline" size="xs">Details</Button>
+                                    <Button variant="outline" size="xs" onClick={() => detailsModal(request)}>Details</Button>
                                 </td>
-                            </tr>))}
+                            </tr>
+                        ))}
                     </tbody>
                 </Table>
             </ScrollArea>

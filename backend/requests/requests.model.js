@@ -28,7 +28,7 @@ export async function createRequest(citizen_id, reason, firstname, lastname, str
 export async function getAllOpenRequests() {
     //returns all open requests
     const promisePool = MySQLWrapper.createOrGetPool().promise();
-    const sql = `SELECT Request.* FROM Request WHERE Request.status = "offen" AND Request.closed IS NULL AND Request.opened IS NOT NULL;`;
+    const sql = `SELECT Request.* FROM Request WHERE Request.status = "offen" AND Request.closed IS NULL AND Request.opened IS NOT NULL ORDER BY Request.opened ASC;`;
     let [results, fields] = await promisePool.execute(sql);
     if (results.length === 0) { return []; }
 
