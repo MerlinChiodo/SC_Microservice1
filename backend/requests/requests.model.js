@@ -26,12 +26,31 @@ export async function createRequest(citizen_id, reason, firstname, lastname, str
 }
 
 export async function getAllOpenRequests() {
-    //TODO get from database
     //returns all open requests
-    return [
-        { request_id: 1, citizen_id: 1, reasoning: 'Beschreibung 1', citizen_id_new: 1, opened: '2018-01-01T00:00:00.000Z', closed: null, status: 'offen' },
-        { request_id: 2, citizen_id: 2, reasoning: 'Beschreibung 2', citizen_id_new: 2, opened: '2018-01-01T00:00:00.000Z', closed: null, status: 'offen' }
-    ];
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `SELECT Request.* FROM Request WHERE Request.status = "offen" AND Request.closed IS NULL AND Request.opened IS NOT NULL;`;
+    let [results, fields] = await promisePool.execute(sql);
+    if (results.length === 0) { return []; }
+
+    const sql2 = `SELECT * FROM Citizen WHERE citizen_id = ?;`;
+    const sql3 = `SELECT * FROM NewCitizenData WHERE citizen_id_new = ?;`;
+
+    for (let index = 0; index < results.length; index++) {
+        const request = results[index];
+
+        //get old citizen data
+        const [results2, fields2] = await promisePool.execute(sql2, [request.citizen_id]);
+        if (results2.length === 0) { throw new Error("Could not get old citizen data"); }
+        delete request.citizen_id;
+        request.citizen_old = results2[0];
+
+        //get new citizen data
+        const [results3, fields3] = await promisePool.execute(sql3, [request.citizen_id_new]);
+        if (results3.length === 0) { throw new Error("Could not get new citizen data"); }
+        delete request.citizen_id_new;
+        request.citizen_new = results3[0];
+    }
+    return results;
 }
 
 export async function approveRequest(request_id) {

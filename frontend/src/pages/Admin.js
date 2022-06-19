@@ -19,6 +19,9 @@ export const Admin = () => {
                 <List.Item>
                     <NavLink to="/admin/genehmigungen" className="admin-link">Genehmigungen ansehen</NavLink>
                 </List.Item>
+                <List.Item>
+                    <NavLink to="/admin/accountchanges" className="admin-link">Accountänderungen ansehen</NavLink>
+                </List.Item>
             </List>
         </div>
     );

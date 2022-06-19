@@ -12,6 +12,7 @@ import { Admin } from "./pages/Admin";
 import { AdminLicenses } from "./pages/admin/Licenses";
 import { RequireAuth } from "./util/SmartAuth";
 import { Error } from "./pages/Error";
+import { AccountChanges } from "./pages/admin/AccountChanges";
 
 export default function App() {
 
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/genehmigungen" element={<RequireAuth isLoggedIn={isLoggedIn} setLoggedIn={setLoggedIn} ><Licenses /></RequireAuth>} />
           <Route path="/admin/aboutus" element={<AboutUs />} />
           <Route path="/admin/genehmigungen" element={<AdminLicenses />} />
+          <Route path="/admin/accountchanges" element={<AccountChanges />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/error" element={<Error />} />
         </Routes>
