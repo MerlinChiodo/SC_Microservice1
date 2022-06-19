@@ -81,6 +81,10 @@ export const AcceptRequestModal = ({ context, id, innerProps }) => (
                 {getFormattedStreetAndNumber(innerProps.request)}
                 {getFormattedCityCodeAndCity(innerProps.request)}
             </Grid.Col>
+            <Grid.Col span={12}>
+                <Text size="lg" weight={800}>Begründung</Text>
+                <Text>{innerProps.request.reasoning}</Text>
+            </Grid.Col>
             <Grid.Col span={12} xs={6}>
                 <Button fullWidth color="red" onClick={() => innerProps.handleDecline(id, innerProps.request.request_id)}>Ablehnen</Button>
             </Grid.Col>
