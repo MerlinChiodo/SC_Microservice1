@@ -64,7 +64,7 @@ describe('Request API', () => {
 
         test('/api/requests [correct input]', async () => {
             //setup
-            const requestBody = { citizen_id: 1, reason: "test", firstname: "test", lastname: "test", street: "test", house_number: "test", city_code: 1, city: "test" };
+            const requestBody = { citizen_id: 1, reason: "test", firstname: "test", lastname: "test", street: "test", house_number: "test", city_code: "12345", city: "test" };
             const dbResult = { request_id: 1, citizen_id: 1, reasoning: 'Darum', citizen_id_new: 1, opened: '2018-01-01T00:00:00.000Z', closed: null, status: 'offen' };
             createRequest.mockReturnValue(dbResult);
             const response = await request(app).post('/api/requests').send(requestBody);
@@ -77,7 +77,7 @@ describe('Request API', () => {
 
         test('/api/requests [wrong input]', async () => {
             //setup
-            const requestBody = { citizen_id: 1, firstname: "test", lastname: "test", street: "test", house_number: "test", city_code: 1, city: "test" };
+            const requestBody = { };
             createRequest.mockReturnValue(false);
             const response = await request(app).post('/api/requests').send(requestBody);
             //check if response is correct
@@ -90,7 +90,7 @@ describe('Request API', () => {
 
         test('/api/requests [database error]', async () => {
             //setup
-            const requestBody = { citizen_id: 1, reason: "test", firstname: "test", lastname: "test", street: "test", house_number: "test", city_code: 1, city: "test" };
+            const requestBody = { citizen_id: 1, reason: "test", firstname: "test", lastname: "test", street: "test", house_number: "test", city_code: "12345", city: "test" };
             createRequest.mockRejectedValue(new Error('database error'));
             const response = await request(app).post('/api/requests').send(requestBody);
             //check if response is correct

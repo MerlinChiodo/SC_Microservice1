@@ -1,3 +1,4 @@
+import MySQLWrapper from "../util/mysql.js";
 
 /* -------------------------------------------------------------------------- */
 /*                              requests.model.js                             */
@@ -5,9 +6,23 @@
 /* -------------------------------------------------------------------------- */
 
 export async function createRequest(citizen_id, reason, firstname, lastname, street, house_number, city_code, city) {
-    //TODO save in database
-    //create a new request in the database
-    return { request_id: 1, citizen_id: citizen_id, reasoning: reason, citizen_id_new: 1, opened: '2018-01-01T00:00:00.000Z', closed: null, status: 'offen' };
+    //create the new citizen data
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `INSERT INTO NewCitizenData(firstname, lastname, street, housenumber, city_code, city) VALUES (?, ?, ?, ?, ?, ?);`;
+    const values = [firstname, lastname, street, house_number, city_code, city];
+    const [results, fields] = await promisePool.execute(sql, values);
+    const citizen_id_new = results.insertId;
+
+    //create a new request and link it to the new citizen data
+    const sql2 = `INSERT INTO Request(citizen_id, citizen_id_new, opened, status, reasoning) VALUES (?, ?, NOW(), 'offen', ?);`;
+    const values2 = [citizen_id, citizen_id_new, reason];
+    const [results2, fields2] = await promisePool.execute(sql2, values2);
+    const request_id = results2.insertId;
+
+    //return the new request
+    const sql3 = `SELECT * FROM Request WHERE request_id = ?;`;
+    const [results3, fields3] = await promisePool.execute(sql3, [request_id]);
+    return results3.length > 0 ? results3[0] : null;
 }
 
 export async function getAllOpenRequests() {
