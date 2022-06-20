@@ -35,7 +35,7 @@ export const Licenses = () => {
   const [permits, setPermits] = useState([]);
 
   const fetchData = () => {
-    let citizenID = SmartAuth.getMyCitizenID();
+    let citizenID = SmartAuth.getCitizenID();
     if (citizenID == null) { return; }
     fetch(`/api/citizen/${citizenID}/permits`)
       .then(response => response.json())
@@ -70,7 +70,7 @@ export const Licenses = () => {
 
   useEffect(() => {
     document.title = "Bürgerbüro - Genehmigungen";
-    setTimeout(fetchData, 500);
+    fetchData();
   }, []);
 
   return (

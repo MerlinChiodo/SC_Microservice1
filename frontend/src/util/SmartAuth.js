@@ -1,37 +1,39 @@
 import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Loader, Center } from "@mantine/core";
 import { Login } from "../pages/Login";
 import Cookies from 'js-cookie';
 
 export class SmartAuth {
 
-    static #citizen = null;
+    static #data = null;
 
     static async #fetchData(token) {
-        const url = `http://auth.smartcityproject.net:8080/verify`;
-        fetch(url, {
-            method: 'POST',
-            body: encodeURIComponent('code') + '=' + encodeURIComponent(token),
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log("received user data:", data);
-                this.#citizen = data;
-            })
-            .catch(error => console.error(error));
+        try {
+            const url = `http://auth.smartcityproject.net:8080/verify`;
+            const response = await fetch(url, {
+                method: 'POST', body: encodeURIComponent('code') + '=' + encodeURIComponent(token),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+            if (!response.ok) { throw new Error(`${response.status} ${response.statusText}`); }
+            const data = await response.json();
+            this.#data = data;
+            console.log("received user data: ", data);
+            return true;
+        } catch (error) {
+            this.#data = null;
+            console.error(error);
+            return false;
+        }
     }
 
-    static isLoggedIn() {
-        if (this.#citizen !== null) {
-            return true;
-        }
-
+    static async verifyUser() {
+        let result = false;
         //check if cookie user_session_token is set
         const tokenCookie = Cookies.get('user_session_token');
         if (tokenCookie !== undefined) {
             console.log("using token from cookie");
-            this.#fetchData(tokenCookie);
-            return true;
+            result = await this.#fetchData(tokenCookie);
         }
 
         //check if token is in url search params
@@ -39,21 +41,26 @@ export class SmartAuth {
         const tokenUrl = params.get('token');
         if (tokenUrl !== null) {
             console.log("using token from url");
-            this.#fetchData(tokenUrl);
+            result = await this.#fetchData(tokenUrl);
             //if on localhost, set cookie
             if (window.location.hostname === "localhost") {
                 console.log("setting cookie for localhost");
                 Cookies.set('user_session_token', tokenUrl);
             }
-            return true;
         }
-
-        return false;
+        return new Promise((resolve) => resolve(result));
     }
 
-    static getMyCitizenID() {
-        if (this.#citizen !== null) {
-            return this.#citizen.citizen_id;
+    static getCitizenID() {
+        if (this.#data !== null) {
+            return this.#data.citizen_id;
+        }
+        return null;
+    }
+
+    static getCitizen() {
+        if (this.#data !== null) {
+            return this.#data.info;
         }
         return null;
     }
@@ -66,8 +73,22 @@ export class SmartAuth {
 
 }
 
-export function RequireAuth({ children }) {
-    let location = useLocation();
-    let auth = SmartAuth.isLoggedIn();
-    return auth ? children : <Login redirect={location.pathname} />;
+export function RequireAuth(props) {
+
+    const location = useLocation();
+    const [isLoading, setLoading] = useState(true);
+    const { isLoggedIn, setLoggedIn, children } = props;
+
+    useEffect(() => {
+        SmartAuth.verifyUser().then((success) => {
+            setLoading(false);
+            setLoggedIn(success);
+        });
+    }, [setLoggedIn]);
+
+    if (isLoading) {
+        return <Center><Loader size="xl" color="green" mt="lg" /></Center>;
+    } else {
+        return isLoggedIn ? children : <Login redirect={location.pathname} />;
+    }
 }

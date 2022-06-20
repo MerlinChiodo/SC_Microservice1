@@ -35,7 +35,7 @@ export const NewLicenseModal = (props) => {
     const handleSubmit = (values) => {
         form.clearErrors();
         form.validate();
-        let citizen_id = SmartAuth.getMyCitizenID();
+        let citizen_id = SmartAuth.getCitizenID();
         if (citizen_id == null) { return; }
         values.citizen_id = citizen_id;
         showNotification({ id: 'request-license', title: 'Bitte warten', message: 'Deine Anfrage wird bearbeitet', loading: true });

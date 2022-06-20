@@ -6,9 +6,11 @@ import logo from "../media/logo.svg";
 import hamburger from "../media/hamburger.svg";
 import cross from "../media/cross.svg";
 
-function NavBar() {
+export default function NavBar(props) {
+
   const [click, setClick] = useState(false);
   const handleClick = () => setClick(!click);
+  const { isLoggedIn } = props;
 
   return (
     <nav className="navbar">
@@ -28,7 +30,7 @@ function NavBar() {
           <li className="nav-item">
             <NavLink to="/genehmigungen" activeclassname="active" className="nav-links" onClick={handleClick} >Genehmigungen</NavLink>
           </li>
-          {SmartAuth.isLoggedIn() && (
+          {isLoggedIn && (
             <li className="nav-item">
               <a href="/" className="nav-links" onClick={SmartAuth.logout}>Abmelden</a>
             </li>
@@ -42,4 +44,3 @@ function NavBar() {
   );
 }
 
-export default NavBar;

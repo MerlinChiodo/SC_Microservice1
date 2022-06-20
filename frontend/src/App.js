@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./App.css";
 import NavBar from "./components/NavBar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -13,16 +14,19 @@ import { RequireAuth } from "./util/SmartAuth";
 import { Error } from "./pages/Error";
 
 export default function App() {
+
   const theme = useMantineTheme();
+  const [isLoggedIn, setLoggedIn] = useState(false);
+
   return (
     <Router>
-      <NavBar />
+      <NavBar isLoggedIn={isLoggedIn} />
       <div className="pages" style={{ background: theme.colors.dark[8] }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/melden" element={<Register />} />
-          <Route path="/account" element={<RequireAuth ><Account /></RequireAuth>} />
-          <Route path="/genehmigungen" element={<RequireAuth  ><Licenses /></RequireAuth>} />
+          <Route path="/account" element={<RequireAuth isLoggedIn={isLoggedIn} setLoggedIn={setLoggedIn} ><Account /></RequireAuth>} />
+          <Route path="/genehmigungen" element={<RequireAuth isLoggedIn={isLoggedIn} setLoggedIn={setLoggedIn} ><Licenses /></RequireAuth>} />
           <Route path="/admin/aboutus" element={<AboutUs />} />
           <Route path="/admin/genehmigungen" element={<AdminLicenses />} />
           <Route path="/admin" element={<Admin />} />
