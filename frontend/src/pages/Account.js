@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 
-export const Requests = () => {
+export const Account = () => {
 
   useEffect(() => {
-    document.title = "Bürgerbüro - Anträge";
+    document.title = "Bürgerbüro - Meine Daten";
   }, []);
 
   return (
     <div>
-      <h1>Anträge</h1>
+      <h1>Meine Daten</h1>
     </div>
   );
 };

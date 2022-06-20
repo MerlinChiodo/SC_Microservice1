@@ -200,6 +200,39 @@ export async function getPermits(request, response) {
         return response.status(500).json({ errors: ['Could not get permits from database'] });
     }
 
+    //add status to each permit
+    for (let i = 0; i < permits.length; i++) {
+        let date_of_issue = permits[i].date_of_issue;
+        let valid_until = permits[i].valid_until;
+        let processed = permits[i].processed;
+        permits[i].status = getPermitStatus(date_of_issue, valid_until, processed);
+    }
+
     // send response
     response.status(200).json({ citizen_id: parseInt(citizen_id), permits: permits });
 };
+
+function getPermitStatus(date_of_issue, valid_until, processed) {
+    if (date_of_issue === null && valid_until === null) {
+        if (processed === 0) {
+            return 'offen';
+        } else {
+            return 'abgelehnt';
+        }
+    }
+    if (date_of_issue !== null && valid_until === null) {
+        return "gültig";
+    }
+    if (date_of_issue !== null && valid_until !== null) {
+        let date_of_issue_date = new Date(date_of_issue);
+        let valid_until_date = new Date(valid_until);
+        let today = new Date();
+        if (today > date_of_issue_date && today < valid_until_date) {
+            return "gültig";
+        }
+        if (today > valid_until_date) {
+            return "abgelaufen";
+        }
+    }
+    return "unbekannt";
+}

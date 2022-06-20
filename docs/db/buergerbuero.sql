@@ -78,9 +78,10 @@ create table Permits
    permits_id           int unsigned not null auto_increment  comment '',
    citizen_id           int unsigned not null  comment '',
    permit_id            int unsigned not null  comment '',
-   date_of_issue        date not null  comment '',
+   date_of_issue        date  comment '',
    valid_until          date  comment '',
-   status               varchar(10) not null  comment '',
+   description          text  comment '',
+   processed            tinyint(1) not null  comment '',
    primary key (permits_id)
 );
 
