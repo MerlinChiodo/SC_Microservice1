@@ -14,7 +14,7 @@ export const Account = () => {
   const handleSubmit = (event, id, type) => {
     event.preventDefault();
     const formData = Object.fromEntries(new FormData(event.target));
-    formData.citizen_id = SmartAuth.getMyCitizenID();
+    formData.citizen_id = SmartAuth.getCitizenID();
     console.log(type, formData);
     showNotification({ id: 'datachange', title: 'Bitte warten', message: 'Deine Anfrage wird bearbeitet', loading: true });
     fetch('/api/requests', { method: 'POST', body: JSON.stringify(formData), headers: { 'Content-Type': 'application/json' } })
@@ -42,9 +42,7 @@ export const Account = () => {
 
   useEffect(() => {
     document.title = "Bürgerbüro - Meine Daten";
-    SmartAuth.loadData().then(() => {
-      setUser(SmartAuth.getUser());
-    });
+    setUser(SmartAuth.getCitizen());
   }, []);
 
   return (
