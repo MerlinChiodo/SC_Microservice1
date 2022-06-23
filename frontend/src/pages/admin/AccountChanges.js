@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { PageContainer } from "../../components/PageContainer";
 import { Grid, Button, ScrollArea, Table, createStyles } from "@mantine/core";
-import { Refresh } from "tabler-icons-react";
+import { showNotification, updateNotification } from '@mantine/notifications';
+import { Check, ExclamationMark, Refresh } from "tabler-icons-react";
 import { useModals } from "@mantine/modals";
 
 const useStyles = createStyles((theme) => ({
@@ -23,12 +24,39 @@ export const AccountChanges = () => {
 
     const handleAccept = (event, modal_id, request_id) => {
         event.preventDefault();
-        modals.closeModal(modal_id);
-        console.log(request_id);
+        showNotification({ id: 'datachange1', title: 'Bitte warten', message: 'Deine Anfrage wird bearbeitet', loading: true });
+        fetch(`/api/requests/approve/${request_id}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.errors) { throw data.errors; }
+                if (data.success && data.success === true) {
+                    updateNotification({ id: 'datachange1', title: 'Erfolgreich', message: 'Die Accountdaten wurden geändert', icon: <Check />, loading: false });
+                    modals.closeModal(modal_id);
+                    fetchData();
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                updateNotification({ id: 'datachange1', title: 'Fehler', message: 'Die Accountdaten konnten nicht geändert werden', icon: <ExclamationMark />, loading: false, color: 'red' });
+            });
     };
+
     const handleDecline = (modal_id, request_id) => {
-        modals.closeModal(modal_id);
-        console.log(request_id);
+        showNotification({ id: 'datachange2', title: 'Bitte warten', message: 'Deine Anfrage wird bearbeitet', loading: true });
+        fetch(`/api/requests/reject/${request_id}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.errors) { throw data.errors; }
+                if (data.success && data.success === true) {
+                    updateNotification({ id: 'datachange2', title: 'Erfolgreich', message: 'Die Änderung der Accountdaten wurde abgelehnt', icon: <Check />, loading: false });
+                    modals.closeModal(modal_id);
+                    fetchData();
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                updateNotification({ id: 'datachange2', title: 'Fehler', message: 'Die Änderung der Accountdaten konnte nicht abgelehnt werden', icon: <ExclamationMark />, loading: false, color: 'red' });
+            });
     };
 
     const detailsModal = (request) => modals.openContextModal('acceptRequest', {
