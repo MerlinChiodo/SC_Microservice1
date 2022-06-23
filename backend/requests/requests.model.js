@@ -54,16 +54,21 @@ export async function getAllOpenRequests() {
 }
 
 export async function approveRequest(request_id) {
-    //TODO update in database
-    //change citizen data
     //mark request as approved
-    return true;
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `CALL ApproveRequest(?);`;
+    const values = [request_id];
+    const [results, fields] = await promisePool.execute(sql, values);
+    return results.affectedRows > 0;
 }
 
 export async function rejectRequest(request_id) {
-    //TODO update in database
     //mark request as rejected
-    return true;
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `UPDATE Request SET status = 'abgelehnt', closed = NOW() WHERE request_id = ?;`;
+    const values = [request_id];
+    const [results, fields] = await promisePool.execute(sql, values);
+    return results.affectedRows > 0;
 }
 
 export async function getRequestById(request_id) {
