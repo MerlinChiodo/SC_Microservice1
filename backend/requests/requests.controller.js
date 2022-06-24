@@ -20,7 +20,7 @@ export async function createRequest(request, response) {
     //create request in database
     let request_out;
     try {
-        request_out = await request.requestModel.createRequest(input.citizen_id, input.reason, input.firstname, input.lastname, input.street, input.housenumber, input.city_cody, input.city);
+        request_out = await request.requestModel.createRequest(input.citizen_id, input.reason || null, input.firstname || null, input.lastname || null, input.street || null, input.housenumber || null, input.city_code || null, input.city || null);
         if (request_out == null) { return response.status(400).json({ errors: ['Could not create request'] }); }
     } catch (error) {
         console.error(error);
