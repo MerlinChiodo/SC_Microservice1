@@ -35,7 +35,12 @@ export default function Footer() {
         <div className={classes.footer}>
             <Container className={classes.inner}>
                 <Text>Bürgerbüro</Text>
-                <Group className={classes.links}>{items}</Group>
+                <Group className={classes.links}>
+                    <Anchor color="dimmed" size="sm" href='http://www.supersmartcity.de'>
+                        Landingpage
+                    </Anchor>
+                    {items}
+                </Group>
             </Container>
         </div>
     );
