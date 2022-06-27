@@ -10,7 +10,7 @@ import { useMantineTheme } from '@mantine/core';
 import { AboutUs } from "./pages/admin/AboutUs";
 import { Admin } from "./pages/Admin";
 import { AdminLicenses } from "./pages/admin/Licenses";
-import { RequireAuth } from "./util/SmartAuth";
+import { RequireAuth, RequireAdmin } from "./util/SmartAuth";
 import { Error } from "./pages/Error";
 import { AccountChanges } from "./pages/admin/AccountChanges";
 
@@ -18,6 +18,7 @@ export default function App() {
 
   const theme = useMantineTheme();
   const [isLoggedIn, setLoggedIn] = useState(false);
+  const [isAdmin, setAdmin] = useState(false);
 
   return (
     <Router>
@@ -28,10 +29,10 @@ export default function App() {
           <Route path="/melden" element={<Register />} />
           <Route path="/account" element={<RequireAuth isLoggedIn={isLoggedIn} setLoggedIn={setLoggedIn} ><Account /></RequireAuth>} />
           <Route path="/genehmigungen" element={<RequireAuth isLoggedIn={isLoggedIn} setLoggedIn={setLoggedIn} ><Licenses /></RequireAuth>} />
-          <Route path="/admin/aboutus" element={<AboutUs />} />
-          <Route path="/admin/genehmigungen" element={<AdminLicenses />} />
-          <Route path="/admin/accountchanges" element={<AccountChanges />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/aboutus" element={<RequireAdmin isAdmin={isAdmin} setAdmin={setAdmin}><AboutUs /></RequireAdmin>} />
+          <Route path="/admin/genehmigungen" element={<RequireAdmin isAdmin={isAdmin} setAdmin={setAdmin}><AdminLicenses /></RequireAdmin>} />
+          <Route path="/admin/accountchanges" element={<RequireAdmin isAdmin={isAdmin} setAdmin={setAdmin}><AccountChanges /></RequireAdmin>} />
+          <Route path="/admin" element={<RequireAdmin isAdmin={isAdmin} setAdmin={setAdmin}><Admin /></RequireAdmin>} />
           <Route path="/error" element={<Error />} />
         </Routes>
       </div>
