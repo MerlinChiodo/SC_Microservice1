@@ -7,13 +7,13 @@
         {
             "firstname": "John",
             "lastname": "Doe",
-            "date of birth": "2020-01-01",
+            "date_of_birth": "2020-01-01",
             "email": "john@doe.com"
         },
         {
             "firstname": "John",
             "lastname": "Doe",
-            "date of birth": "2020-01-01",
+            "date_of_birth": "2020-01-01",
             "email": "john@doe.com"
         }
     ],
@@ -21,13 +21,13 @@
         {
             "firstname": "John",
             "lastname": "Doe",
-            "date of birth": "2020-01-01",
+            "date_of_birth": "2020-01-01",
             "email": "john@doe.com"
         },
         {
             "firstname": "John",
             "lastname": "Doe",
-            "date of birth": "2020-01-01",
+            "date_of_birth": "2020-01-01",
             "email": "john@doe.com"
         }
     ]

@@ -6,7 +6,7 @@
     "refugee": {
         "firstname": "John",
         "lastname": "Doe",
-        "date of birth": "2000-01-20",
+        "date_of_birth": "2000-01-20",
         "email": "john@doe.com"
     }
 }
