@@ -20,7 +20,11 @@ const useStyles = createStyles((theme) => ({
 export default function Footer() {
 
     const { classes } = useStyles();
-    const links = [{ link: "/impressum", label: "Impressum" }, { link: "/datenschutz", label: "Datenschutz" }];
+    const links = [
+        { link: "/impressum", label: "Impressum" },
+        { link: "/datenschutz", label: "Datenschutz" },
+        { link: "/admin", label: "Mitarbeiter" }
+    ];
     const items = links.map((link) => (
         <Anchor color="dimmed" size="sm" component={Link} key={link.label} to={link.link} onClick={(e) => window.scrollTo(0, 0)}>
             {link.label}
