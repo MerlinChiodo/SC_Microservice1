@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
-import Cookies from "js-cookie";
 import { PageContainer } from "../components/PageContainer";
 import { Text, Button, TextInput, Grid } from "@mantine/core";
+import { showNotification } from "@mantine/notifications";
+import { ExclamationMark } from "tabler-icons-react";
+import React, { useEffect } from "react";
 import { useForm } from '@mantine/form';
+import Cookies from "js-cookie";
 
 export const AdminLogin = (props) => {
-
-    const { redirect } = props;
 
     const form = useForm({
         initialValues: {
@@ -25,18 +25,20 @@ export const AdminLogin = (props) => {
         const url = `http://auth.smartcityproject.net:8080/employee/login`;
         fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'x-www-form-urlencoded', 'Accept': 'application/json' },
-            body: encodeURIComponent('username') + '=' + encodeURIComponent(values.username) + '&' + encodeURIComponent('password') + '=' + encodeURIComponent(values.password)
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded;', 'Accept': 'application/json' },
+            body: 'username=' + encodeURIComponent(values.username) + '&password=' + encodeURIComponent(values.password)
         }).then(response => {
-            if (!response.ok) {
-                throw new Error(`${response.status} ${response.statusText}`);
-            }
             return response.json();
         }).then(data => {
+            if (data.error && data.error.length > 0) {
+                throw new Error(data.error);
+            }
             console.log(data);
             Cookies.set('employee_session_token', data.employee_session_token);
+            window.location.reload(false);
         }).catch(error => {
             console.error(error);
+            showNotification({ icon: <ExclamationMark />, title: "Anmelden fehlgeschlagen", message: "Nutzername oder Passwort nicht korrekt", color: "red", autoClose: 15000 });
         });
     };
 
