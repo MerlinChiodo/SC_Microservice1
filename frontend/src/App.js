@@ -18,7 +18,6 @@ export default function App() {
 
   const theme = useMantineTheme();
   const [isLoggedIn, setLoggedIn] = useState(false);
-  const [isAdmin, setAdmin] = useState(false);
 
   return (
     <Router>
@@ -29,10 +28,10 @@ export default function App() {
           <Route path="/melden" element={<Register />} />
           <Route path="/account" element={<RequireAuth isLoggedIn={isLoggedIn} setLoggedIn={setLoggedIn} ><Account /></RequireAuth>} />
           <Route path="/genehmigungen" element={<RequireAuth isLoggedIn={isLoggedIn} setLoggedIn={setLoggedIn} ><Licenses /></RequireAuth>} />
-          <Route path="/admin/aboutus" element={<RequireAdmin isAdmin={isAdmin} setAdmin={setAdmin}><AboutUs /></RequireAdmin>} />
-          <Route path="/admin/genehmigungen" element={<RequireAdmin isAdmin={isAdmin} setAdmin={setAdmin}><AdminLicenses /></RequireAdmin>} />
-          <Route path="/admin/accountchanges" element={<RequireAdmin isAdmin={isAdmin} setAdmin={setAdmin}><AccountChanges /></RequireAdmin>} />
-          <Route path="/admin" element={<RequireAdmin isAdmin={isAdmin} setAdmin={setAdmin}><Admin /></RequireAdmin>} />
+          <Route path="/admin/aboutus" element={<RequireAdmin><AboutUs /></RequireAdmin>} />
+          <Route path="/admin/genehmigungen" element={<RequireAdmin><AdminLicenses /></RequireAdmin>} />
+          <Route path="/admin/accountchanges" element={<RequireAdmin><AccountChanges /></RequireAdmin>} />
+          <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
           <Route path="/error" element={<Error />} />
         </Routes>
       </div>

@@ -9,20 +9,20 @@ export class SmartAuth {
 
     static #data = null;
 
-    static async #fetchData(token, url) {
+    static async #fetchData(token, url, setDataCallback) {
         try {
-            const apiurl = `http://auth.smartcityproject.net:8080/${url || 'verify'}`;
+            const apiurl = `http://auth.smartcityproject.net:8080${url || ''}`;
             const response = await fetch(apiurl, {
-                method: 'POST', body: encodeURIComponent('code') + '=' + encodeURIComponent(token),
+                method: 'POST', body: 'code=' + encodeURIComponent(token),
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });
             if (!response.ok) { throw new Error(`${response.status} ${response.statusText}`); }
             const data = await response.json();
-            this.#data = data;
-            console.log("received user data: ", data);
+            setDataCallback(data);
+            console.log("received user/employee data: ", data);
             return true;
         } catch (error) {
-            this.#data = null;
+            setDataCallback(null);
             console.error(error);
             return false;
         }
@@ -34,7 +34,7 @@ export class SmartAuth {
         const tokenCookie = Cookies.get('user_session_token');
         if (tokenCookie !== undefined) {
             console.log("using token from cookie");
-            result = await this.#fetchData(tokenCookie);
+            result = await this.#fetchData(tokenCookie, '/verify', (data) => { this.#data = data; });
         }
 
         //check if token is in url search params
@@ -42,7 +42,7 @@ export class SmartAuth {
         const tokenUrl = params.get('token');
         if (tokenUrl !== null) {
             console.log("using token from url");
-            result = await this.#fetchData(tokenUrl);
+            result = await this.#fetchData(tokenUrl, '/verify', (data) => { this.#data = data; });
             //if on localhost, set cookie
             if (window.location.hostname === "localhost") {
                 console.log("setting cookie for localhost");
@@ -57,21 +57,8 @@ export class SmartAuth {
         //check if cookie employee_session_token is set
         const tokenCookie = Cookies.get('employee_session_token');
         if (tokenCookie !== undefined) {
-            console.log("using token from cookie");
-            result = await this.#fetchData(tokenCookie, 'employee/verify');
-        }
-
-        //check if token is in url search params
-        let params = (new URL(document.location)).searchParams;
-        const tokenUrl = params.get('token');
-        if (tokenUrl !== null) {
-            console.log("using token from url");
-            result = await this.#fetchData(tokenUrl, 'employee/verify');
-            //if on localhost, set cookie
-            if (window.location.hostname === "localhost") {
-                console.log("setting cookie for localhost");
-                Cookies.set('employee_session_token', tokenUrl);
-            }
+            console.log("using employee token from cookie");
+            result = await this.#fetchData(tokenCookie, '/employee/verify', (data) => { });
         }
         return new Promise((resolve) => resolve(result));
     }
@@ -93,6 +80,8 @@ export class SmartAuth {
     static logout() {
         Cookies.remove('user_session_token', { path: '/', domain: 'localhost' });
         Cookies.remove('user_session_token', { path: '/', domain: 'smartcityproject.net' });
+        Cookies.remove('employee_session_token', { path: '/', domain: 'localhost' });
+        Cookies.remove('employee_session_token', { path: '/', domain: 'smartcityproject.net' });
         SmartAuth.citizen = null;
     }
 
@@ -106,8 +95,8 @@ export function RequireAuth(props) {
 
     useEffect(() => {
         SmartAuth.verifyUser().then((success) => {
-            setLoading(false);
             setLoggedIn(success);
+            setLoading(false);
         });
     }, [setLoggedIn]);
 
@@ -122,12 +111,13 @@ export function RequireAdmin(props) {
 
     const location = useLocation();
     const [isLoading, setLoading] = useState(true);
-    const { isAdmin, setAdmin, children } = props;
+    const [isAdmin, setAdmin] = useState(false);
+    const { children } = props;
 
     useEffect(() => {
         SmartAuth.verifyAdmin().then((success) => {
-            setLoading(false);
             setAdmin(success);
+            setLoading(false);
         });
     }, [setAdmin]);
 
