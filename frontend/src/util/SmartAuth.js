@@ -4,6 +4,7 @@ import { Loader, Center } from "@mantine/core";
 import { Login } from "../pages/Login";
 import { AdminLogin } from "../pages/AdminLogin";
 import Cookies from 'js-cookie';
+import { AUTH_URL, COOKIE_URL } from "../util/Constants";
 
 export class SmartAuth {
 
@@ -11,7 +12,7 @@ export class SmartAuth {
 
     static async #fetchData(token, url, setDataCallback) {
         try {
-            const apiurl = `http://auth.smartcityproject.net:8080${url || ''}`;
+            const apiurl = `${AUTH_URL}${url || ''}`;
             const response = await fetch(apiurl, {
                 method: 'POST', body: 'code=' + encodeURIComponent(token),
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -79,9 +80,9 @@ export class SmartAuth {
 
     static logout() {
         Cookies.remove('user_session_token', { path: '/', domain: 'localhost' });
-        Cookies.remove('user_session_token', { path: '/', domain: 'smartcityproject.net' });
+        Cookies.remove('user_session_token', { path: '/', domain: COOKIE_URL });
         Cookies.remove('employee_session_token', { path: '/', domain: 'localhost' });
-        Cookies.remove('employee_session_token', { path: '/', domain: 'smartcityproject.net' });
+        Cookies.remove('employee_session_token', { path: '/', domain: COOKIE_URL });
         SmartAuth.citizen = null;
     }
 

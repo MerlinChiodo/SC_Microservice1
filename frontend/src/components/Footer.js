@@ -1,6 +1,7 @@
 import { createStyles, Container, Group, Anchor, Text } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import React from 'react';
+import { LANDINGPAGE_URL } from '../util/Constants';
 
 const useStyles = createStyles((theme) => ({
     footer: {
@@ -36,7 +37,7 @@ export default function Footer() {
             <Container className={classes.inner}>
                 <Text>Bürgerbüro</Text>
                 <Group className={classes.links}>
-                    <Anchor color="dimmed" size="sm" href='http://www.supersmartcity.de'>
+                    <Anchor color="dimmed" size="sm" href={LANDINGPAGE_URL}>
                         Landingpage
                     </Anchor>
                     {items}

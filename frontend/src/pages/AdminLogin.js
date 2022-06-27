@@ -5,6 +5,7 @@ import { ExclamationMark } from "tabler-icons-react";
 import React, { useEffect } from "react";
 import { useForm } from '@mantine/form';
 import Cookies from "js-cookie";
+import { AUTH_URL } from "../util/Constants";
 
 export const AdminLogin = (props) => {
 
@@ -22,7 +23,7 @@ export const AdminLogin = (props) => {
         form.clearErrors();
         form.validate();
         console.log(values);
-        const url = `http://auth.smartcityproject.net:8080/employee/login`;
+        const url = `${AUTH_URL}/employee/login`;
         fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded;', 'Accept': 'application/json' },

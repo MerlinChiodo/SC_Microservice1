@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { PageContainer } from "../components/PageContainer";
 import { Text, Button } from "@mantine/core";
 import { ExternalLink } from 'tabler-icons-react';
+import { AUTH_URL } from "../util/Constants";
 
 export const Error = () => {
 
@@ -10,7 +11,7 @@ export const Error = () => {
     });
 
     const host = window.location.origin;
-    const url = `http://auth.smartcityproject.net:8080/external?redirect_success=${host}&redirect_error=${host}/error`;
+    const url = `${AUTH_URL}/external?redirect_success=${host}&redirect_error=${host}/error`;
 
     return (
         <PageContainer>

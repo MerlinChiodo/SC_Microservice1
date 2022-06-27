@@ -4,6 +4,7 @@ import { useForm } from '@mantine/form';
 import { showNotification, updateNotification } from '@mantine/notifications';
 import { Link, CameraPlus, Check, ExclamationMark } from "tabler-icons-react";
 import { PageContainer } from "../../components/PageContainer";
+import { BUERGERBUERO_URL, EXAMPLE_IMAGE_URL } from "../../util/Constants";
 
 export const AboutUs = () => {
 
@@ -53,10 +54,10 @@ export const AboutUs = () => {
             <Textarea label="Kurzbeschreibung" minRows={6} placeholder="Dieser Text wird auf der Landingpage angezeigt" {...form.getInputProps('aboutus')} />
           </Grid.Col>
           <Grid.Col span={12}>
-            <TextInput label="Link zur Landingpage" required placeholder="https://www.example.com" type="url" {...form.getInputProps('link')} icon={<Link size={18} />} description="zum Beispiel: http://vps2290194.fastwebserver.de:9710/" />
+            <TextInput label="Link zur Landingpage" required placeholder={BUERGERBUERO_URL} type="url" {...form.getInputProps('link')} icon={<Link size={18} />} description={`zum Beispiel: ${BUERGERBUERO_URL}`} />
           </Grid.Col>
           <Grid.Col span={12}>
-            <TextInput label="Url zum Bild" placeholder="https://www.example.com/image.jpg" type="url" {...form.getInputProps('image')} icon={<CameraPlus size={18} />} description="zu Beispiel: https://raw.githubusercontent.com/SmartCityProjectGroup/SmartCity/main/Logo_4.png" />
+            <TextInput label="Url zum Bild" placeholder={EXAMPLE_IMAGE_URL} type="url" {...form.getInputProps('image')} icon={<CameraPlus size={18} />} description={`zum Beispiel: ${EXAMPLE_IMAGE_URL}`} />
           </Grid.Col>
           <Grid.Col span={12}>
             <Button fullWidth mt="lg" type="submit">Absenden</Button>
