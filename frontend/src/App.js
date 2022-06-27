@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { Register } from "./pages/Register";
@@ -13,6 +14,8 @@ import { AdminLicenses } from "./pages/admin/Licenses";
 import { RequireAuth, RequireAdmin } from "./util/SmartAuth";
 import { Error } from "./pages/Error";
 import { AccountChanges } from "./pages/admin/AccountChanges";
+import Datenschutz from "./pages/Datenschutz";
+import Impressum from "./pages/Impressum";
 
 export default function App() {
 
@@ -33,8 +36,11 @@ export default function App() {
           <Route path="/admin/accountchanges" element={<RequireAdmin><AccountChanges /></RequireAdmin>} />
           <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
           <Route path="/error" element={<Error />} />
+          <Route path="/datenschutz" element={<Datenschutz />} />
+          <Route path="/impressum" element={<Impressum />} />
         </Routes>
       </div>
+      <Footer />
     </Router>
   );
 }
