@@ -17,10 +17,10 @@ const Refugee = {
     properties: {
         firstname: { type: "string", minLength: 1 },
         lastname: { type: "string", minLength: 1 },
-        "date of birth": { type: "string", format: "date" },
+        date_of_birth: { type: "string", format: "date-time" },
         email: { type: "string", format: "email" }
     },
-    required: ["firstname", "lastname", "date of birth", "email"]
+    required: ["firstname", "lastname", "date_of_birth", "email"]
 };
 
 const NewRefugeeEvent = {

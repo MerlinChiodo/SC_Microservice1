@@ -72,13 +72,17 @@ export async function rejectRequest(request_id) {
 }
 
 export async function getRequestById(request_id) {
-    //TODO get from database
     //returns all information about request
-    return { request_id: request_id, citizen_id: 1, reasoning: 'Beschreibung 1', citizen_id_new: 1, opened: '2018-01-01T00:00:00.000Z', closed: null, status: 'offen' };
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `SELECT * FROM Request WHERE request_id = ?;`;
+    const [results, fields] = await promisePool.execute(sql, [request_id]);
+    return results.length > 0 ? results[0] : null;
 }
 
 export async function deleteRequest(request_id) {
-    //TODO delete in database
     //return true if deleted, false if not
-    return true;
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `DELETE FROM Request WHERE request_id = ?;`;
+    const [results, fields] = await promisePool.execute(sql, [request_id]);
+    return results.affectedRows > 0;
 }

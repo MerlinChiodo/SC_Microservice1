@@ -18,7 +18,7 @@ export async function handleRefugeeEvent(event) {
 
     //event is valid
     const citizen = {
-        firstname: event.refugee.firstname, lastname: event.refugee.lastname, birthdate: event.refugee["date of birth"], email: event.refugee.email
+        firstname: event.refugee.firstname, lastname: event.refugee.lastname, birthdate: event.refugee.date_of_birth.slice(0, 10), email: event.refugee.email
     }
 
     //try to create citizen
@@ -60,12 +60,12 @@ export async function handleRefugeeFamilyEvent(event) {
         for (let index = 0; index < event.parents.length; index++) {
             const parent = event.parents[index];
             const citizen = {
-                firstname: parent.firstname, lastname: parent.lastname, birthdate: parent["date of birth"], email: parent.email
+                firstname: parent.firstname, lastname: parent.lastname, birthdate: parent.date_of_birth.slice(0, 10), email: parent.email
             }
             const parent_id = await createCitizen(citizen);
             parent_ids.push(parent_id);
             RabbitMQWrapper.publish(new CitizenCreatedEvent(parent_id));
-            
+
         }
     } catch (error) {
         return RabbitMQWrapper.error(`Error while saving parents: ${error}`);
@@ -77,7 +77,7 @@ export async function handleRefugeeFamilyEvent(event) {
         for (let index = 0; index < event.children.length; index++) {
             const child = event.children[index];
             const citizen = {
-                firstname: child.firstname, lastname: child.lastname, birthdate: child["date of birth"], email: child.email
+                firstname: child.firstname, lastname: child.lastname, birthdate: child.date_of_birth.slice(0, 10), email: child.email
             }
             const child_id = await createCitizen(citizen);
             child_ids.push(child_id);
