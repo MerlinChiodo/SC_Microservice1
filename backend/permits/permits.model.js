@@ -6,28 +6,47 @@ import MySQLWrapper from "../util/mysql.js";
 /* -------------------------------------------------------------------------- */
 
 export async function createPermit(title, description) {
-    //TODO save in database
     //create a new permit in the database and return it
-    return { permit_id: 1, title: title, description: description };
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `INSERT INTO Permit(title, description) VALUES (?, ?);`;
+    const [results, fields] = await promisePool.execute(sql, [title, description]);
+    if (results.affectedRows === 0) {
+        return null;
+    }
+    return { permit_id: parseInt(results.insertId), title: title, description: description };
 };
 
 export async function getPermitById(permit_id) {
-    //TODO get from database
     //returns all information about permit
-    return { permit_id: permit_id, title: 'Titel 1', description: 'Beschreibung 1' };
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `SELECT * FROM Permit WHERE permit_id = ? LIMIT 1;`;
+    const [rows, fields] = await promisePool.execute(sql, [permit_id]);
+    return rows.length > 0 ? rows[0] : null;
 };
 
 export async function updatePermit(permit_id, title, description) {
-    //TODO update in database
     //if description is null, only update title
     //returns the updated permit
-    return { permit_id: permit_id, title: title, description: description };
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    let sql = `UPDATE Permit SET title = ?, description = ? WHERE permit_id = ?;`;
+    let values = [title, description, permit_id];
+    if (description === null) {
+        sql = `UPDATE Permit SET title = ? WHERE permit_id = ?;`;
+        values = [title, permit_id];
+    }
+    const [results, fields] = await promisePool.execute(sql, values);
+    if (results.affectedRows === 0) {
+        return null;
+    }
+    return getPermitById(permit_id);
 };
 
 export async function deletePermit(permit_id) {
-    //TODO delete in database
     //return true if deleted, false if not
-    return true;
+    const promisePool = MySQLWrapper.createOrGetPool().promise();
+    const sql = `DELETE FROM Permit WHERE permit_id = ?;`;
+    const [results, fields] = await promisePool.execute(sql, [permit_id]);
+    return results.affectedRows > 0;
 };
 
 export async function getAllPermits() {
